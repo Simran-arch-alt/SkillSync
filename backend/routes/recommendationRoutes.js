@@ -3,6 +3,7 @@ const {
   getRecommendations,
   getMyRecommendations,
   getSkillGapForJob,
+  getAdvancedRecommendations,
 } = require('../controllers/recommendationController');
 const { protect } = require('../middleware/auth');
 const { validateSkillsArray, validateObjectId } = require('../middleware/validate');
@@ -17,5 +18,8 @@ router.get('/me', protect, getMyRecommendations);
 
 // Private: detailed skill gap analysis against a specific job
 router.get('/gap/:jobId', protect, validateObjectId('jobId'), getSkillGapForJob);
+
+// Public: advanced recommendations using Python rule engine + DAG learning path
+router.post('/advanced', getAdvancedRecommendations);
 
 module.exports = router;

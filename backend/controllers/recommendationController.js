@@ -1,3 +1,5 @@
+const { spawn } = require('child_process');
+const path = require('path');
 const Job = require('../models/Job');
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
@@ -67,4 +69,42 @@ const getSkillGapForJob = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getRecommendations, getMyRecommendations, getSkillGapForJob };
+/**
+ * @desc    Get advanced recommendations using the Python rule engine + DAG learning path
+ * @route   POST /api/recommendations/advanced
+ * @access  Public
+ * @body    { "skills": ["Python", "SQL", "Docker"] }
+ */
+const getAdvancedRecommendations = asyncHandler(async (req, res) => {
+  const { skills } = req.body;
+
+  const pythonScript = path.join(__dirname, '..', '..', 'python-engine', 'rule_recommender.py');
+  const skillsArg = skills.join(', ');
+
+  const child = spawn('python', [pythonScript, '--skills', skillsArg]);
+
+  let stdout = '';
+  let stderr = '';
+
+  child.stdout.on('data', (data) => {
+    stdout += data.toString();
+  });
+
+  child.stderr.on('data', (data) => {
+    stderr += data.toString();
+  });
+
+  child.on('close', (code) => {
+    if (code !== 0) {
+      return sendSuccess(res, 500, 'Python rule engine failed.', { error: stderr || 'Unknown error' });
+    }
+    try {
+      const result = JSON.parse(stdout);
+      return sendSuccess(res, 200, 'Advanced recommendations generated successfully.', result);
+    } catch {
+      return sendSuccess(res, 500, 'Failed to parse Python engine output.', { raw: stdout });
+    }
+  });
+});
+
+module.exports = { getRecommendations, getMyRecommendations, getSkillGapForJob, getAdvancedRecommendations };
