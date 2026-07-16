@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  --app-bg-1: #f8fafc;
+  --app-bg-2: #eef3f8;
+  --sidebar-bg: #ffffff;
+  --panel-bg: #ffffff;
+  --panel-border: #e2e8f0;
+  --muted: #64748b;
+  --accent: #7c3aed;
+  --accent-2: #84b74e;
+  --green: #84b74e;
+  --text: #0f172a;
+  --panel-inner: #ffffff;
+  --critical: #ef4444;
+  --recommended: #f59e0b;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+
+  background: linear-gradient(145deg, var(--app-bg-1) 0%, var(--app-bg-2) 100%);
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  scroll-behavior: smooth;
+}

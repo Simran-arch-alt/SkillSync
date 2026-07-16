@@ -1,0 +1,14 @@
+<svg width="160" height="40" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#3b82f6" />
+      <stop offset="1" stop-color="#a855f7" />
+    </linearGradient>
+  </defs>
+  <rect width="320" height="80" rx="12" fill="transparent" />
+  <g transform="translate(10,8)">
+    <circle cx="28" cy="28" r="24" fill="url(#g1)" />
+    <path d="M18 28c2.5-6 8-10 14-10s11.5 4 14 10" stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <text x="70" y="36" font-family="Inter, Segoe UI, sans-serif" font-weight="800" font-size="28" fill="#e6eef9">SkillSync</text>
+  </g>
+</svg>

@@ -1,0 +1,40 @@
+{
+  "name": "skill-gap-career-recommendation-backend",
+  "version": "1.0.0",
+  "description": "Backend for Web-based Technology for Measuring the Skill Gap and Recommending Careers for IT Students",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "import:jobs": "node scripts/importJobs.js",
+    "create:admin": "node scripts/createAdmin.js"
+  },
+  "keywords": [
+    "skill-gap",
+    "career-recommendation",
+    "express",
+    "mongodb",
+    "capstone"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.0",
+    "multer": "^1.4.5-lts.1",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
