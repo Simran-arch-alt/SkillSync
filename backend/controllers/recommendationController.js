@@ -70,7 +70,7 @@ const getSkillGapForJob = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Get advanced recommendations using the Python rule engine + DAG learning path
+ * @desc    Get advanced recommendations using cosine similarity + rules + DAG
  * @route   POST /api/recommendations/advanced
  * @access  Public
  * @body    { "skills": ["Python", "SQL", "Docker"] }
@@ -78,32 +78,44 @@ const getSkillGapForJob = asyncHandler(async (req, res) => {
 const getAdvancedRecommendations = asyncHandler(async (req, res) => {
   const { skills } = req.body;
 
-  const pythonScript = path.join(__dirname, '..', '..', 'python-engine', 'rule_recommender.py');
+  const skillMatcherScript = path.join(__dirname, '..', '..', 'python-engine', 'skill_matcher.py');
+  const ruleRecommenderScript = path.join(__dirname, '..', '..', 'python-engine', 'rule_recommender.py');
   const skillsArg = skills.join(', ');
 
-  const child = spawn('python', [pythonScript, '--skills', skillsArg]);
+  let topMatches = null;
+  let ruleResult = null;
+  let scriptError = null;
 
-  let stdout = '';
-  let stderr = '';
-
-  child.stdout.on('data', (data) => {
-    stdout += data.toString();
+  // Run both Python scripts in parallel
+  const runPython = (script, args) => new Promise((resolve) => {
+    const child = spawn('python', [script, ...args]);
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (d) => { stdout += d.toString(); });
+    child.stderr.on('data', (d) => { stderr += d.toString(); });
+    child.on('close', (code) => {
+      if (code !== 0) return resolve({ error: stderr || 'Process failed' });
+      try { resolve(JSON.parse(stdout)); }
+      catch { resolve({ error: 'Invalid JSON output', raw: stdout }); }
+    });
   });
 
-  child.stderr.on('data', (data) => {
-    stderr += data.toString();
-  });
+  const [matches, rules] = await Promise.all([
+    runPython(skillMatcherScript, ['--skills', skillsArg]),
+    runPython(ruleRecommenderScript, ['--skills', skillsArg]),
+  ]);
 
-  child.on('close', (code) => {
-    if (code !== 0) {
-      return sendSuccess(res, 500, 'Python rule engine failed.', { error: stderr || 'Unknown error' });
-    }
-    try {
-      const result = JSON.parse(stdout);
-      return sendSuccess(res, 200, 'Advanced recommendations generated successfully.', result);
-    } catch {
-      return sendSuccess(res, 500, 'Failed to parse Python engine output.', { raw: stdout });
-    }
+  if (matches.error) scriptError = matches.error;
+  else topMatches = matches;
+
+  if (rules.error) scriptError = rules.error;
+  else ruleResult = rules;
+
+  return sendSuccess(res, 200, 'Advanced recommendations generated successfully.', {
+    topMatches: topMatches ? topMatches.results : [],
+    ruleRecommendations: ruleResult ? ruleResult.ruleRecommendations : [],
+    learningPath: ruleResult ? ruleResult.learningPath : [],
+    errors: scriptError || null,
   });
 });
 

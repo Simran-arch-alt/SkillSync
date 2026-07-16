@@ -99,6 +99,7 @@ def match(resume_text, vectorizer, X, rows):
 
 if __name__ == '__main__':
     resume_text = ''
+    skills_list = []
     mongo_uri = 'mongodb://localhost:27017/'
 
     args = sys.argv[1:]
@@ -107,21 +108,32 @@ if __name__ == '__main__':
         if args[i] == '--text' and i + 1 < len(args):
             resume_text = args[i + 1]
             i += 2
+        elif args[i] == '--skills' and i + 1 < len(args):
+            skills_list = [s.strip() for s in args[i + 1].split(',') if s.strip()]
+            i += 2
         elif args[i] == '--mongo-uri' and i + 1 < len(args):
             mongo_uri = args[i + 1]
             i += 2
         else:
             i += 1
 
-    if not resume_text:
-        resume_text = sys.stdin.read()
-
     rows = load_jobs(mongo_uri)
     vectorizer, X = build_matcher(rows)
-    results, skills = match(resume_text, vectorizer, X, rows)
 
-    output = {
-        'extractedSkills': ', '.join(skills),
-        'results': results,
-    }
+    if skills_list:
+        skills_text = ', '.join(skills_list)
+        results, skills = match(skills_text, vectorizer, X, rows)
+        output = {
+            'inputSkills': skills_list,
+            'results': results,
+        }
+    else:
+        if not resume_text:
+            resume_text = sys.stdin.read()
+        results, skills = match(resume_text, vectorizer, X, rows)
+        output = {
+            'extractedSkills': ', '.join(skills),
+            'results': results,
+        }
+
     print(json.dumps(output))
