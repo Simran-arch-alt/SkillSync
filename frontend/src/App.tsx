@@ -84,7 +84,6 @@ function App() {
          
           <Route path ="/reset-password" element={<ResetPassword/>}/>
           <Route path ="/forgot-password" element={<ForgotPassword/>}/>
-          <Route path="/profile" element={<Profile />} />
           <Route path ="/admin/settings" element={<AdminSettings/>}/>
           <Route path ="/admin/profile" element={<AdminProfile/>}/>
           <Route path ="/admin/notifications" element={<AdminNotifications/>}/>

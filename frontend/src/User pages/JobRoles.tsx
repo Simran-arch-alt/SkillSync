@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import Sidebar from '../components/Nav/Sidebar';
 import {
@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   Chip,
+  CircularProgress,
   MenuItem,
   Paper,
   Select,
@@ -44,81 +45,59 @@ interface JobRole {
   category: 'tech' | 'management' | 'data';
 }
 
-const roles: JobRole[] = [
-  {
-    title: 'Frontend Developer',
-    description: 'Build interactive user interfaces with modern frameworks. Specialise in React, Vue, and CSS architecture for scalable web apps.',
-    label: 'High Demand',
-    icon: <CodeIcon />,
-    iconBg: 'rgba(17, 157, 164, 0.08)',
-    iconColor: '#119DA4',
-    labelBg: '#DCFCE7',
-    labelColor: '#15803D',
-    category: 'tech',
-  },
-  {
-    title: 'DevOps Specialist',
-    description: 'Bridge development and operations through CI/CD pipelines, container orchestration, and cloud infrastructure automation.',
-    label: 'High Demand',
-    icon: <StorageIcon />,
-    iconBg: 'rgba(25, 100, 126, 0.08)',
-    iconColor: '#19647E',
-    labelBg: '#DCFCE7',
-    labelColor: '#15803D',
-    category: 'tech',
-  },
-  {
-    title: 'Data Scientist',
-    description: 'Extract insights from complex datasets using statistical modelling, machine learning, and data visualisation tools.',
-    label: 'Growth Sector',
-    icon: <QueryStatsIcon />,
-    iconBg: 'rgba(30, 58, 95, 0.08)',
-    iconColor: '#1E3A5F',
-    labelBg: 'rgba(17, 157, 164, 0.12)',
-    labelColor: '#119DA4',
-    category: 'data',
-  },
-  {
-    title: 'Cybersecurity Analyst',
-    description: 'Protect digital assets by identifying vulnerabilities, conducting threat analysis, and enforcing security protocols.',
-    label: 'High Demand',
-    icon: <SecurityIcon />,
-    iconBg: 'rgba(255, 200, 87, 0.18)',
-    iconColor: '#ffc857',
-    labelBg: '#DCFCE7',
-    labelColor: '#15803D',
-    category: 'tech',
-  },
-  {
-    title: 'Cloud Engineer',
-    description: 'Design, deploy, and manage cloud infrastructure on AWS, Azure, or GCP to enable scalable enterprise solutions.',
-    label: 'Growth Sector',
-    icon: <CloudQueueIcon />,
-    iconBg: 'rgba(17, 157, 164, 0.08)',
-    iconColor: '#119DA4',
-    labelBg: 'rgba(25, 100, 126, 0.12)',
-    labelColor: '#19647E',
-    category: 'management',
-  },
-  {
-    title: 'ML Engineer',
-    description: 'Productionise machine learning models, build data pipelines, and optimise model performance at scale.',
-    label: 'Emerging',
-    icon: <PrecisionManufacturingIcon />,
-    iconBg: 'rgba(17, 157, 164, 0.08)',
-    iconColor: '#119DA4',
-    labelBg: '#F3E8FF',
-    labelColor: '#A855F7',
-    category: 'data',
-  },
-];
+const categoryIcons: Record<string, { icon: ReactNode; bg: string; color: string }> = {
+  frontend_developer: { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  backend_developer: { icon: <StorageIcon />, bg: 'rgba(25, 100, 126, 0.08)', color: '#19647E' },
+  data_scientist: { icon: <QueryStatsIcon />, bg: 'rgba(30, 58, 95, 0.08)', color: '#1E3A5F' },
+  cybersecurity: { icon: <SecurityIcon />, bg: 'rgba(255, 200, 87, 0.18)', color: '#ffc857' },
+  cloud_engineer: { icon: <CloudQueueIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  ml_engineer: { icon: <PrecisionManufacturingIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+};
+
+const defaultIcon = { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' };
+
+interface ApiJob {
+  _id: string;
+  job_title: string;
+  company: string;
+  location: string;
+  role_category: string;
+  skills: string[];
+}
 
 const JobRoles = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [apiJobs, setApiJobs] = useState<ApiJob[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  
+  useEffect(() => {
+    fetch('/api/jobs?limit=100')
+      .then(r => r.json())
+      .then(json => {
+        if (json.success && json.data?.jobs) {
+          setApiJobs(json.data.jobs);
+        }
+      })
+      .catch(() => setApiJobs([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const roles: JobRole[] = apiJobs.map(job => {
+    const cat = categoryIcons[job.role_category] || defaultIcon;
+    return {
+      title: job.job_title,
+      description: `${job.company} - ${job.location || 'Remote'}`,
+      label: job.skills.length > 3 ? 'High Demand' : 'Available',
+      icon: cat.icon,
+      iconBg: cat.bg,
+      iconColor: cat.color,
+      labelBg: '#DCFCE7',
+      labelColor: '#15803D',
+      category: 'tech' as const,
+    };
+  });
 
   const filteredRoles = roles.filter((role) => {
     const matchesSearch =

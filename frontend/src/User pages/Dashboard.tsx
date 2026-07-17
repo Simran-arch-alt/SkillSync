@@ -17,7 +17,12 @@ import {LinearProgress, CircularProgress, Chip, Divider, Button} from "@mui/mate
 
 
 import {useNavigate} from 'react-router-dom';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import { getProfile, getSkills } from '../services/studentService';
+import { getTopRecommendedJobs, getTopSkills, getDashboardSummary } from '../services/dashboardService';
+import type { TopRecommendation } from '../services/dashboardService';
+import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+
 interface Activity {
     id: number;
     type: 'view' | 'skill' | 'course';
@@ -25,37 +30,97 @@ interface Activity {
     time: string;
 }
 
+interface SkillGap {
+    name: string;
+    level: 'critical' | 'recommended' | 'optional';
+}
+
 const Dashboard=() =>{
     const navigate = useNavigate();
-    
-    const recommendedRoles = [
-        { title: 'Frontend Developer', percent: 78, change: '+5%',color:'#e5981c' },
-        { title: 'DevOps Specialist', percent: 72, change: '+3%', color:'#e5981c' },
-        { title: 'Data Scientist', percent: 65, change: '+8%', color:'#e5981c' },
-    ];
+    const [userName, setUserName] = useState('User');
+    const [userSkills, setUserSkills] = useState<string[]>([]);
+    const [recommendedRoles, setRecommendedRoles] = useState<TopRecommendation[]>([]);
+    const [loadingRoles, setLoadingRoles] = useState(true);
+    const [skillGaps, setSkillGaps] = useState<SkillGap[]>([]);
+    const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
+    const [profilePercent, setProfilePercent] = useState(0);
 
-    const skillGaps = [
-        { name: 'Kubernetes', level: 'critical' },
-        { name: 'Terraform', level: 'critical' },
-        { name: 'AWS Lambda', level: 'recommended' },
-        { name: 'Prometheus', level: 'recommended' },
-        { name: 'GraphQL', level: 'optional' },
-        { name: 'TypeScript', level: 'optional' },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const profile = await getProfile() as any;
+                const user = profile?.user || profile;
+                setUserName(user?.name || 'User');
 
-    const [recentActivity] = useState<Activity[]>([
-        { id: 1, type: 'view', text: 'Viewed Frontend Developer role', time: '2 hours ago' },
-        { id: 2, type: 'skill', text: 'Added JavaScript to profile', time: '5 hours ago' },
-        { id: 3, type: 'course', text: 'Completed React course', time: '1 day ago' },
-        { id: 4, type: 'view', text: 'Viewed Data Scientist role', time: '1 day ago' },
-    ]);
+                // Calculate profile completion
+                let completed = 0;
+                let total = 5;
+                if (user?.name) completed++;
+                if (user?.email) completed++;
+                if (user?.university) completed++;
+                if (user?.degree) completed++;
+                try {
+                    const skills = await getSkills();
+                    if (Array.isArray(skills) && skills.length > 0) {
+                        completed++;
+                        setUserSkills(skills);
+                    }
+                    total = 6;
+                    setProfilePercent(Math.round((completed / total) * 100));
+                } catch {
+                    setProfilePercent(Math.round((completed / total) * 100));
+                }
+
+                // Build recent activity from profile data
+                const activities: Activity[] = [];
+                let actId = 1;
+                if (user?.name) {
+                    activities.push({ id: actId++, type: 'skill' as const, text: `Profile created for ${user.name}`, time: 'Account created' });
+                }
+                if (user?.university) {
+                    activities.push({ id: actId++, type: 'view' as const, text: `University: ${user.university}`, time: 'Profile detail' });
+                }
+                if (user?.degree) {
+                    activities.push({ id: actId++, type: 'course' as const, text: `Degree: ${user.degree}`, time: 'Profile detail' });
+                }
+                setRecentActivity(activities);
+            } catch {
+                const stored = localStorage.getItem('rememberedUser');
+                if (stored) setUserName(stored);
+            }
+            try {
+                const roles = await getTopRecommendedJobs();
+                setRecommendedRoles(roles.filter(r => r.score > 0));
+            } catch {
+                setRecommendedRoles([]);
+            } finally {
+                setLoadingRoles(false);
+            }
+
+            // Fetch skill gaps from top skills in the job market
+            try {
+                const topSkills = await getTopSkills(10);
+                const userSkills = await getSkills().catch(() => []);
+                const userSkillSet = new Set((Array.isArray(userSkills) ? userSkills : []).map((s: string) => s.toLowerCase()));
+                const gaps: SkillGap[] = topSkills
+                    .filter(s => !userSkillSet.has(s.skill.toLowerCase()))
+                    .slice(0, 6)
+                    .map((s, i) => ({
+                        name: s.skill,
+                        level: i < 2 ? 'critical' : i < 4 ? 'recommended' : 'optional' as 'critical' | 'recommended' | 'optional',
+                    }));
+                setSkillGaps(gaps);
+            } catch {
+                setSkillGaps([]);
+            }
+        };
+        fetchData();
+    }, []);
     
-    const profilePercent = 35;
-    
-    const handleViewDetails = (role: { title: string; percent: number; change: string; color: string }) => {
+    const handleViewDetails = (role: TopRecommendation) => {
         navigate('/alignment-results', {
             state: {
-                roleTitle: role.title,
+                roleTitle: role.job,
                 from: 'dashboard',
             },
         });
@@ -72,7 +137,7 @@ const Dashboard=() =>{
                             <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1E3A5F' }}>
                                 Welcome back,{' '}
                                 <Typography component="span" sx={{ color: '#119DA4', fontWeight: 'bold', fontSize: 'inherit' }}>
-                                    krishnaa Khaitu!
+                                    {userName}!
                                 </Typography>
                             </Typography>
                             <Typography sx={{ mt: 1, color: '#64748B' }}>Let's continue building your career path</Typography>
@@ -88,29 +153,70 @@ const Dashboard=() =>{
                     </Box>
                 </Box>
 
-                <Box sx={{ p: 4, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 3 }}>
-                    {recommendedRoles.map((r) => (
-                        <Box key={r.title} sx={{ bgcolor: '#FFFFFF', p: 3, borderRadius: 2, border: '1px solid #E2E8F0', boxShadow: 3, transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-4px)', boxShadow: 6 } }}>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#0F172A' }}>{r.title}</Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-                                <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                                    <CircularProgress variant="determinate" value={r.percent} size={90} thickness={5} sx={{ color: r.color, bgcolor: 'transparent' }} />
-                                    <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#0F172A' }}>{r.percent}%</Typography>
+                {loadingRoles ? (
+                    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+                        <CircularProgress />
+                    </Box>
+                ) : recommendedRoles.length > 0 ? (
+                    <Box sx={{ p: 4, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 3 }}>
+                        {recommendedRoles.map((r) => {
+                            const scoreColor = r.score >= 70 ? '#19647E' : r.score >= 40 ? '#e5981c' : '#ef4444';
+                            return (
+                                <Box key={r.jobId} sx={{ bgcolor: '#FFFFFF', p: 3, borderRadius: 2, border: '1px solid #E2E8F0', boxShadow: 3, transition: 'all 0.3s ease', '&:hover': { transform: 'translateY(-4px)', boxShadow: 6 } }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#0F172A' }}>{r.job}</Typography>
+                                    <Typography sx={{ color: '#64748B', fontSize: 14 }}>{r.company}{r.location ? ` - ${r.location}` : ''}</Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+                                        <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+                                            <CircularProgress variant="determinate" value={r.score} size={90} thickness={5} sx={{ color: scoreColor, bgcolor: 'transparent' }} />
+                                            <Box sx={{ top: 0, left: 0, bottom: 0, right: 0, position: 'absolute', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#0F172A' }}>{r.score}%</Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ flex: 1 }}>
+                                            <Typography sx={{ color: '#718096', fontWeight: 600, fontSize: 13 }}>
+                                                {r.matchedSkills.length} skills match
+                                            </Typography>
+                                            <Button variant="outlined" onClick={() => handleViewDetails(r)} sx={{ mt: 2, color: '#119DA4', borderColor: '#119DA4', transition: 'all 0.3s ease', '&:hover': { borderColor: '#119DA4', bgcolor: 'rgba(17, 157, 164, 0.1)', transform: 'translateY(-3px)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' } }}>
+                                                View Details
+                                            </Button>
+                                        </Box>
                                     </Box>
                                 </Box>
-                                <Box sx={{ flex: 1 }}>
-                                    <Typography sx={{ color: '#718096', fontWeight: 600 }}>{r.change}</Typography>
-                                    <Button variant="outlined" onClick={() => handleViewDetails(r)} sx={{ mt: 2, color: '#119DA4', borderColor: '#119DA4', transition: 'all 0.3s ease', '&:hover': { borderColor: '#119DA4', bgcolor: 'rgba(17, 157, 164, 0.1)', transform: 'translateY(-3px)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' } }}>
-                                        View Details
-                                    </Button>
-                                </Box>
-                            </Box>
+                            );
+                        })}
+                    </Box>
+                ) : (
+                    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{ textAlign: 'center', py: 6 }}>
+                            <CloudUploadOutlinedIcon sx={{ fontSize: 80, color: '#94A3B8' }} />
+                            <Typography variant="h6" sx={{ color: '#64748B', mt: 2 }}>
+                                Upload your CV to get personalized career recommendations
+                            </Typography>
+                            <Button variant="contained" onClick={() => navigate('/cv-upload')} sx={{ mt: 3, bgcolor: '#119DA4', '&:hover': { bgcolor: '#0e8a91' } }}>
+                                Upload CV
+                            </Button>
                         </Box>
-                    ))}
-                </Box>
+                    </Box>
+                )}
 
-                <Box sx={{ p: 4, display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 3 }}>
+                <Box sx={{ p: 4, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 3 }}>
+                    <Box sx={{ bgcolor: '#FFFFFF', p: 3, borderRadius: 2, minHeight: 180, border: '1px solid #E2E8F0', boxShadow: 3 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#0F172A' }}>Your Skills</Typography>
+                        {userSkills.length > 0 ? (
+                            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                                {userSkills.map((skill) => (
+                                    <Chip key={skill} label={skill} sx={{ bgcolor: '#DFF7F6', color: '#0F766E', fontWeight: 500, border: '1px solid #119DA4' }} />
+                                ))}
+                            </Box>
+                        ) : (
+                            <Box sx={{ textAlign: 'center', py: 3 }}>
+                                <Typography sx={{ color: '#94A3B8' }}>No skills yet. Upload your CV to extract skills.</Typography>
+                                <Button variant="outlined" onClick={() => navigate('/cv-upload')} sx={{ mt: 2, color: '#119DA4', borderColor: '#119DA4', '&:hover': { borderColor: '#0e8a91', bgcolor: 'rgba(17,157,164,0.05)' } }}>
+                                    Upload CV
+                                </Button>
+                            </Box>
+                        )}
+                    </Box>
                     <Box sx={{ bgcolor: '#FFFFFF', p: 3, borderRadius: 2, minHeight: 180, border: '1px solid #E2E8F0', boxShadow: 3 }}>
                         <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: '#0F172A' }}>Skill Gap Summary</Typography>
                         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>

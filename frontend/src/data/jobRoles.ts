@@ -1,5 +1,5 @@
 export interface JobRole {
-  id: number;
+  id: string;
   name: string;
   category:
     | "Web Development"
@@ -14,7 +14,7 @@ export interface JobRole {
 
 export const initialJobRoles: JobRole[] = [
   {
-    id: 1,
+    id: "1",
     name: "Frontend Developer",
     category: "Web Development",
     requiredSkills: [
@@ -27,7 +27,7 @@ export const initialJobRoles: JobRole[] = [
     status: "Active",
   },
   {
-    id: 2,
+    id: "2",
     name: "Backend Developer",
     category: "Web Development",
     requiredSkills: [
@@ -39,7 +39,7 @@ export const initialJobRoles: JobRole[] = [
     status: "Active",
   },
   {
-    id: 3,
+    id: "3",
     name: "Data Scientist",
     category: "AI & ML",
     requiredSkills: [

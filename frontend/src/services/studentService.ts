@@ -23,7 +23,8 @@ export async function updateProfile(data: Partial<StudentProfile>): Promise<Stud
 }
 
 export async function getSkills(): Promise<string[]> {
-  return request<string[]>('/students/skills');
+  const res = await request<{ skills: string[] }>('/students/skills');
+  return res.skills || [];
 }
 
 export async function updateSkills(skills: string[]): Promise<string[]> {

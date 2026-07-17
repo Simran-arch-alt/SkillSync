@@ -1,6 +1,19 @@
+import { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
+import { getMe } from "../../services/authService";
 
 const DashboardHeader = () => {
+  const [adminName, setAdminName] = useState("Administrator");
+
+  useEffect(() => {
+    getMe()
+      .then((data: any) => {
+        const user = data.user || data;
+        if (user?.name) setAdminName(user.name);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <Box
       sx={{
@@ -26,7 +39,7 @@ const DashboardHeader = () => {
           color: "#64748B",
         }}
       >
-        Welcome back, Administrator! Here's an overview of your SkillSync
+        Welcome back, {adminName}! Here's an overview of your SkillSync
         platform, including user activity, skills, and system performance.
       </Typography>
     </Box>

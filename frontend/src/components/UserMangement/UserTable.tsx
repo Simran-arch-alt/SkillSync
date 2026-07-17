@@ -5,7 +5,6 @@ import {
   IconButton,
   LinearProgress,
   Paper,
-  Tab,
   Table,
   TableBody,
   TableCell,

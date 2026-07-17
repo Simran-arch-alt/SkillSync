@@ -3,6 +3,10 @@ const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const { sendSuccess } = require('../utils/apiResponse');
 const { normalizeSkills } = require('../utils/skillMatcher');
+const { execFile } = require('child_process');
+const path = require('path');
+const { promisify } = require('util');
+const execFileAsync = promisify(execFile);
 
 /**
  * @desc    Get logged-in student's profile
@@ -113,12 +117,37 @@ const uploadResume = asyncHandler(async (req, res) => {
   if (!req.file) {
     throw new AppError('No file uploaded.', 400);
   }
+
+  const resumePath = `/uploads/${req.file.filename}`;
+  const absolutePath = path.join(__dirname, '..', 'uploads', req.file.filename);
+
   const user = await User.findByIdAndUpdate(
     req.user._id,
-    { resume: `/uploads/${req.file.filename}` },
+    { resume: resumePath },
     { new: true }
   );
-  return sendSuccess(res, 200, 'Resume uploaded successfully.', { resume: user.resume });
+
+    let extractedSkills = [];
+    try {
+      const parserPath = path.join(__dirname, '..', '..', 'python-engine', 'cv_parser.py');
+      const { stdout } = await execFileAsync('python', [parserPath, '--file', absolutePath], {
+        timeout: 15000,
+        encoding: 'utf-8',
+      });
+      const result = JSON.parse(stdout);
+      if (result.skills && result.skills.length > 0) {
+        extractedSkills = normalizeSkills(result.skills);
+        user.skills = extractedSkills;
+        await user.save();
+      }
+    } catch (err) {
+      console.warn('CV skill extraction skipped:', err.message);
+    }
+
+  return sendSuccess(res, 200, 'Resume uploaded successfully.', {
+    resume: user.resume,
+    skills: extractedSkills,
+  });
 });
 
 module.exports = {

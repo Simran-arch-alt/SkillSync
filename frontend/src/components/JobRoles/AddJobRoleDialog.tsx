@@ -37,7 +37,7 @@ const AddJobRoleDialog = ({
     if (!role || !category || !skills) return;
 
     onAddRole({
-      id: Date.now(),
+      id: String(Date.now()),
       name: role,
       category,
       requiredSkills: skills

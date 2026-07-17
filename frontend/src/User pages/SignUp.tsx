@@ -11,7 +11,8 @@ import {
   InputAdornment,
 } from '@mui/material';
 import { Visibility, VisibilityOff, AutoGraph } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../services/authService';
 
 const dashboardColors = {
   primary: '#119DA4',
@@ -19,6 +20,7 @@ const dashboardColors = {
 };
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,10 +28,9 @@ const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  
-    
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setError('');
@@ -54,7 +55,15 @@ const Signup = () => {
       return;
     }
 
-    alert('Signup Successful!');
+    setLoading(true);
+    try {
+      await register({ name, email, password });
+      navigate('/login');
+    } catch (err: any) {
+      setError(err?.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -102,7 +111,7 @@ const Signup = () => {
                 position: 'absolute',
                 inset: 'auto -18% -14% -18%',
                 height: 230,
-                backgroundcolor:'#1E3A5F',
+                backgroundColor:'#1E3A5F',
                 filter: 'blur(18px)',
                 opacity: 0.95,
                 pointerEvents: 'none',
@@ -276,6 +285,7 @@ const Signup = () => {
                   type="submit"
                   fullWidth
                   variant="contained"
+                  disabled={loading}
                   sx={{
                     bgcolor: dashboardColors.primary,
                     py: 1.5,

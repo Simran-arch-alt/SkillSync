@@ -77,8 +77,7 @@ const SecurityCard = () => {
       >
         <LockIcon color="primary" />
 
-        <Typography sx={{
-          variant:"h6",
+        <Typography variant="h6" sx={{
           fontWeight:"bold",}}
         >
           Account Security

@@ -1,5 +1,5 @@
 export interface User{
-    id:number;
+    id:string;
     name:string,
     email:string,
 
@@ -12,7 +12,7 @@ export interface User{
 }
 export const users:User[] = [
     {
-        id:1,
+        id:'1',
         name:'John Doe',
         email:'john.doe@example.com',
         careerGoal:'Software Engineer',
@@ -23,7 +23,7 @@ export const users:User[] = [
         lastLogin:'2 hours ago',
     },
     {
-        id:2,
+        id:'2',
         name:'Jane Smith',
         email:'jane.smith@example.com',
         careerGoal:'Data Scientist',

@@ -1,4 +1,4 @@
-import {Box, Typography, Button,Paper, Avatar,
+import {Box, Typography, Button,Paper, Avatar, Alert, Snackbar,
     
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
@@ -6,11 +6,59 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import Divider from '@mui/material/Divider';
 import  CloudUploadOutlinedIcon  from '@mui/icons-material/CloudUploadOutlined';
 import {useNavigate} from 'react-router-dom';
+import {useState, useRef} from 'react';
+import { uploadResume } from '../services/studentService';
 
 
 
 const CvUpload =() =>{
     const navigate =useNavigate();
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setError('File size must be less than 5MB');
+                return;
+            }
+            const ext = file.name.split('.').pop()?.toLowerCase();
+            if (!['pdf', 'docx', 'doc'].includes(ext || '')) {
+                setError('Only PDF, DOCX, and DOC files are allowed');
+                return;
+            }
+            setSelectedFile(file);
+            setError('');
+        }
+    };
+
+    const handleUpload = async () => {
+        if (!selectedFile) {
+            setError('Please select a file first');
+            return;
+        }
+        setUploading(true);
+        setError('');
+        try {
+            await uploadResume(selectedFile);
+            setSuccess(true);
+            localStorage.setItem('profileCompleted', 'true');
+            setTimeout(() => navigate('/dashboard'), 1500);
+        } catch (err: any) {
+            setError(err.message || 'Upload failed. Please try again.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleDropZoneClick = () => {
+        fileInputRef.current?.click();
+    };
+
     return(
        <Box sx={{
             minHeight:'100vh',
@@ -141,15 +189,24 @@ const CvUpload =() =>{
     </Typography>
   </Box>
   </Box>
+  <input
+    type="file"
+    accept=".pdf,.docx,.doc"
+    ref={fileInputRef}
+    style={{ display: 'none' }}
+    onChange={handleFileSelect}
+  />
   <Box
+  onClick={handleDropZoneClick}
   sx={{
     border: "2px dashed #CBD5E1",
     borderRadius: 4,
     p: 8,
     textAlign: "center",
-    bgcolor: "#FAFAFA",
+    bgcolor: selectedFile ? "#F0FDF4" : "#FAFAFA",
     cursor: "pointer",
     transition: "0.3s",
+    borderColor: selectedFile ? "#22C55E" : undefined,
 
     "&:hover": {
       borderColor: "#119DA4",
@@ -159,37 +216,27 @@ const CvUpload =() =>{
 >
     <CloudUploadOutlinedIcon
         sx={{fontSize:80,
-            color:'#94A3B8',
+            color: selectedFile ? '#22C55E' : '#94A3B8',
         }}/>
-  <Typography
-    sx={{
-      fontSize: 60,
-      mb: 2,
-    }}
-  >
-    
-  </Typography>
-
-  <Typography
-    variant="h6"
-    sx={{
-      fontWeight: 600,
-      color: "#18181B",
-    }}
-  >
-    Drag  and drop your CV/Resume here, or click to browse files
-  </Typography>
-
-
-  <Typography
-    sx={{
-      mt: 2,
-      color: "#94A3B8",
-      fontSize: 14,
-    }}
-  >
-    Supports PDF, DOCX • Max 5MB
-  </Typography>
+  {selectedFile ? (
+    <>
+      <Typography variant="h6" sx={{ fontWeight: 600, color: '#22C55E', mt: 2 }}>
+        {selectedFile.name}
+      </Typography>
+      <Typography sx={{ mt: 1, color: '#64748B', fontSize: 14 }}>
+        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+      </Typography>
+    </>
+  ) : (
+    <>
+      <Typography variant="h6" sx={{ fontWeight: 600, color: '#18181B' }}>
+        Drag and drop your CV/Resume here, or click to browse files
+      </Typography>
+      <Typography sx={{ mt: 2, color: '#94A3B8', fontSize: 14 }}>
+        Supports PDF, DOCX • Max 5MB
+      </Typography>
+    </>
+  )}
 </Box>
 
 <Box sx={{
@@ -250,13 +297,9 @@ const CvUpload =() =>{
 
     </Button>
 
-
     <Button variant="contained"
-    onClick ={() =>{
-      localStorage.setItem('profileCompleted', 'true');
-navigate('/dashboard')}
-    }
-       
+    onClick ={handleUpload}
+    disabled={uploading}
 
     sx={{
         bgcolor:'#119DA4',
@@ -266,23 +309,28 @@ navigate('/dashboard')}
         fontWeight:'bold',
         width:'20%',
         mt:2,
-
-        
-
-
-
+        '&.Mui-disabled': { bgcolor: '#94A3B8', color: '#FFFFFF' },
     }}>
-        Continue
+        {uploading ? 'Uploading...' : 'Continue'}
 
     </Button>
 
     </Box>
 
-
-
+    {error && (
+        <Typography sx={{ color: '#ef4444', textAlign: 'center', mt: 2 }}>
+            {error}
+        </Typography>
+    )}
+    <Snackbar open={success} autoHideDuration={2000} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert severity="success" sx={{ width: '100%' }}>
+            CV uploaded successfully! Redirecting to dashboard...
+        </Alert>
+    </Snackbar>
             
             </Paper>
             </Box>
+
 
 
 

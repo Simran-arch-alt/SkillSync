@@ -10,12 +10,36 @@ import { Notifications } from "@mui/icons-material";
 import NotificationPanel from "../../User pages/NotificationPanel";
 import ProfileMenu from "./ProfileMenu";
 import{ useNavigate } from "react-router-dom";
+import { getMe } from "../../services/authService";
 
 const Nav: React.FC = () => {
   const [anchorEl, setAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const navigate = useNavigate();
 
+  const role =
+    localStorage.getItem("role") || "student";
+
+  const [currentUser, setCurrentUser] = React.useState({
+    name: "",
+    email: "",
+    role: role as "admin" | "student",
+  });
+
+  React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    getMe()
+      .then((data: any) => {
+        const user = data.user || data;
+        setCurrentUser({
+          name: user.name || "",
+          email: user.email || "",
+          role: (user.role as "admin" | "student") || role,
+        });
+      })
+      .catch(() => {});
+  }, [role]);
 
   const handleOpenNotifications = (
   event: React.MouseEvent<HTMLElement>
@@ -31,23 +55,6 @@ const Nav: React.FC = () => {
   const handleCloseNotifications = () => {
     setAnchorEl(null);
   };
-
-  // Temporary data (replace with backend later)
-  const role =
-    localStorage.getItem("role") || "student";
-
-  const currentUser =
-    role === "admin"
-      ? {
-          name: "System Administrator",
-          email: "admin@skillsync.com",
-          role: "admin" as const,
-        }
-      : {
-          name: "Krishnaa Khaitu",
-          email: "krishnaa@gmail.com",
-          role: "student" as const,
-        };
 
   return (
     <AppBar

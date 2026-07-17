@@ -67,6 +67,7 @@ const ProfileMenu = ({
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("role");
+    localStorage.removeItem("token");
 
     navigate("/login");
   };

@@ -49,7 +49,7 @@ const AddUserDialog = ({
     }
 
     const newUser: User = {
-      id: Date.now(),
+      id: String(Date.now()),
 
       name,
 

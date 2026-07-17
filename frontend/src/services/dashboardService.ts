@@ -22,27 +22,26 @@ export interface DashboardSummary {
 }
 
 export async function getDashboardSummary(): Promise<DashboardSummary> {
-  const res = await request<{ success: boolean; data: DashboardSummary }>('/dashboard/summary');
-  return res.data;
+  return request<DashboardSummary>('/dashboard/summary');
 }
 
 export async function getTopRecommendedJobs(): Promise<TopRecommendation[]> {
-  const res = await request<{ success: boolean; data: { recommendations: TopRecommendation[] } }>(
+  const res = await request<{ recommendations: TopRecommendation[] }>(
     '/dashboard/top-recommended-jobs'
   );
-  return res.data.recommendations;
+  return res.recommendations;
 }
 
 export async function getTopSkills(limit = 10): Promise<{ skill: string; count: number }[]> {
-  const res = await request<{ success: boolean; data: { topSkills: { skill: string; count: number }[] } }>(
+  const res = await request<{ topSkills: { skill: string; count: number }[] }>(
     `/dashboard/top-skills?limit=${limit}`
   );
-  return res.data.topSkills;
+  return res.topSkills;
 }
 
 export async function getCategories(): Promise<{ category: string; count: number }[]> {
-  const res = await request<{ success: boolean; data: { categories: { category: string; count: number }[] } }>(
+  const res = await request<{ categories: { category: string; count: number }[] }>(
     '/dashboard/categories'
   );
-  return res.data.categories;
+  return res.categories;
 }

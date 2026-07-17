@@ -19,6 +19,7 @@ import{ToggleButton,
 
 import { Visibility, VisibilityOff, AutoGraph } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
+import { login as loginApi } from '../services/authService';
 
 const dashboardColors = {
   primary: '#119DA4',
@@ -46,34 +47,27 @@ const Login = () => {
 
     setLoading(true);
 
-    setTimeout(() => {
-      if (role ==='student') {
-        if(username === 'student' && password === 'student123') {
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('role', 'student');
-             
-       const profileCompleted = localStorage.getItem('profileCompleted');
+    try {
+      const data = await loginApi(username, password);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('role', data.user.role);
 
-        if (profileCompleted === 'true') {
-          navigate('/dashboard');
-        } else {
-          navigate('/cv-scanner');
-        }
-      } else {
-        setError('Invalid username or password');
+      if (rememberMe) {
+        localStorage.setItem('rememberedUser', data.user.name);
       }
-    } else if (role === 'admin') {
-      if(username === 'admin' && password === 'admin123') {
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('role', 'admin');
+
+      if (data.user.role === 'student') {
+        const profileCompleted = localStorage.getItem('profileCompleted');
+        navigate(profileCompleted === 'true' ? '/dashboard' : '/cv-scanner');
+      } else {
         navigate('/admin-dashboard');
       }
-      else {
-        setError('Invalid username or password');
-      }
-    }
+    } catch {
+      setError('Invalid username or password');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   }
   return (
     <Box
@@ -123,7 +117,7 @@ const Login = () => {
                 position: 'absolute',
                 inset: 'auto -18% -14% -18%',
                 height: 230,
-                backgroundcolor:'#1E3A5F',
+                backgroundColor:'#1E3A5F',
                 
                 opacity: 0.95,
                 pointerEvents: 'none',

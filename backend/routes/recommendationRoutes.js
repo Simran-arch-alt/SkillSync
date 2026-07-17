@@ -20,6 +20,6 @@ router.get('/me', protect, getMyRecommendations);
 router.get('/gap/:jobId', protect, validateObjectId('jobId'), getSkillGapForJob);
 
 // Public: advanced recommendations using Python rule engine + DAG learning path
-router.post('/advanced', getAdvancedRecommendations);
+router.post('/advanced', validateSkillsArray, getAdvancedRecommendations);
 
 module.exports = router;

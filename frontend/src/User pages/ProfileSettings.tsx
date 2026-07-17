@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Sidebar from "../components/Nav/Sidebar";
 import Nav from "../components/Nav/Nav";
@@ -14,77 +14,48 @@ import PersonalInfoForm from "../components/Profilesettings/PersonalInfoForm";
 import PasswordSection from "../components/Profilesettings/PasswordSection";
 import ActionButtons from "../components/Profilesettings/ActionButtons";
 
+import { getProfile, updateProfile } from "../services/studentService";
 
 const ProfileSettings = () => {
   const navigate = useNavigate();
-
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
-  const handleSave = () => {
+  useEffect(() => {
+    getProfile().then((profile: any) => {
+      const user = profile?.user || profile;
+      setUserName(user?.name || "");
+      setUserEmail(user?.email || "");
+    }).catch(() => {});
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      await updateProfile({ name: userName } as any);
+    } catch {}
     setOpenSnackbar(true);
-
-    
-
-    setTimeout(() => {
-      navigate("/settings");
-    }, 1500);
+    setTimeout(() => navigate("/settings"), 1500);
   };
 
-  const handleCancel = () => {
-    navigate("/settings");
-  };
+  const handleCancel = () => navigate("/settings");
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        minHeight: "100vh",
-        bgcolor: "#F1F5F9",
-      }}
-    >
-      {/* Sidebar */}
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F1F5F9" }}>
       <Sidebar />
-
-      {/* Main Content */}
-      <Box
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}>
         <Nav />
-
-        <Box
-          sx={{
-            p: 4,
-          }}
-        >
+        <Box sx={{ p: 4 }}>
           <CardContainer>
             <Header />
-
-            <AvatarSection name="krishnaa Khaitu" />
-
-            <PersonalInfoForm/>
-
+            <AvatarSection name={userName || "User"} />
+            <PersonalInfoForm name={userName} email={userEmail} onNameChange={setUserName} onEmailChange={setUserEmail} />
             <PasswordSection />
-
-           
-
-            <ActionButtons
-              onCancel={handleCancel}
-              onSave={handleSave}
-            />
+            <ActionButtons onCancel={handleCancel} onSave={handleSave} />
           </CardContainer>
         </Box>
       </Box>
-
-      <CustomSnackbar
-        open={openSnackbar}
-        onClose={() => setOpenSnackbar(false)}
-        message="Profile updated successfully!"
-        severity="success"
-      />
+      <CustomSnackbar open={openSnackbar} onClose={() => setOpenSnackbar(false)} message="Profile updated successfully!" severity="success" />
     </Box>
   );
 };

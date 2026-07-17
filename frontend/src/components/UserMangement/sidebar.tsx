@@ -13,6 +13,7 @@ import PsychologyIcon from "@mui/icons-material/Psychology";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,8 +33,14 @@ const Sidebar = () => {
   const goToSkillLibrary = () => navigate("/skill-library");
   const goToAdminJobRoles = () => navigate("/admin/job-roles");
   const goToReports = () => navigate("/reports");
+  const goToAdminNotifications = () => navigate("/admin/notifications");
   
-  const handleLogout = () => navigate("/login");
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   const goToAdminSettings = () => navigate("/admin/settings");
 
 
@@ -135,7 +142,18 @@ const Sidebar = () => {
           <ListItemText primary="Reports & Analytics" />
         </ListItemButton>
 
-        
+        <ListItemButton
+          onClick={goToAdminNotifications}
+          sx={{
+            gap: 2,
+            py: 1.2,
+            borderRadius: 2,
+            ...(location.pathname === "/admin/notifications" ? activeStyle : {}),
+          }}
+        >
+          <NotificationsIcon sx={{ color: "#FFFFFF" }} />
+          <ListItemText primary="Notifications" />
+        </ListItemButton>
 
       <ListItemButton
           onClick={goToAdminSettings}

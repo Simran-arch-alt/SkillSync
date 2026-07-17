@@ -84,7 +84,7 @@ const getAdvancedRecommendations = asyncHandler(async (req, res) => {
 
   let topMatches = null;
   let ruleResult = null;
-  let scriptError = null;
+  const errors = [];
 
   // Run both Python scripts in parallel
   const runPython = (script, args) => new Promise((resolve) => {
@@ -105,17 +105,17 @@ const getAdvancedRecommendations = asyncHandler(async (req, res) => {
     runPython(ruleRecommenderScript, ['--skills', skillsArg]),
   ]);
 
-  if (matches.error) scriptError = matches.error;
+  if (matches.error) errors.push(matches.error);
   else topMatches = matches;
 
-  if (rules.error) scriptError = rules.error;
+  if (rules.error) errors.push(rules.error);
   else ruleResult = rules;
 
   return sendSuccess(res, 200, 'Advanced recommendations generated successfully.', {
     topMatches: topMatches ? topMatches.results : [],
     ruleRecommendations: ruleResult ? ruleResult.ruleRecommendations : [],
     learningPath: ruleResult ? ruleResult.learningPath : [],
-    errors: scriptError || null,
+    errors: errors.length > 0 ? errors : null,
   });
 });
 
