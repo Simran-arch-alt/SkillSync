@@ -23,13 +23,18 @@ const Sidebar = () => {
         borderLeft:'4px solid #FFFFFF',
     };
 
-  const goHome = () => navigate("/");
+  const goHome = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
   const goToDashboard = () => navigate("/dashboard");
   const goToSkillProfile = () => navigate("/my-skill-profile");
   const goToSettings = () => navigate("/settings");
   const goToJobRoles = () => navigate("/job-roles");
   const goToAlignmentResults = () => navigate("/alignment-results");
-  const goToLearningRoadmap = () => navigate("/learning-roadmap");
+  const goToLearningRoadmap = () => navigate("/learning-roadmap", { state: { roleTitle: 'My Role' } });
 
 
   return (
