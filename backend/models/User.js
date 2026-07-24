@@ -55,6 +55,19 @@ const UserSchema = new mongoose.Schema(
           ? [...new Set(skillsArray.map((s) => String(s).trim().toLowerCase()).filter(Boolean))]
           : [],
     },
+    resumeSkills: {
+      type: [String],
+      default: [],
+      set: (skillsArray) =>
+        Array.isArray(skillsArray)
+          ? [...new Set(skillsArray.map((s) => String(s).trim().toLowerCase()).filter(Boolean))]
+          : [],
+    },
+    status: {
+      type: String,
+      enum: ['active', 'suspended'],
+      default: 'active',
+    },
     role: {
       type: String,
       enum: ['student', 'admin'],

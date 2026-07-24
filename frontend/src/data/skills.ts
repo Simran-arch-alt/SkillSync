@@ -1,6 +1,6 @@
 export interface Skill{
     name:string;
-    id:number;
+    id:string;
     category:
     "Frontend"|"Backend"|"DevOps"|"Database"|"DataScience"|"Cloud";
     weight:number;
@@ -10,7 +10,7 @@ export interface Skill{
 }
 export const initialSkills:Skill[] = [
     {
-        id:1,
+        id:'1',
         name:'React',
         category:'Frontend',
         weight:5,
@@ -18,7 +18,7 @@ export const initialSkills:Skill[] = [
         status:'Active'
     },
     {
-        id:2,
+        id:'2',
         name:'Node.js',
         category:'Backend',
         weight:4,
@@ -26,7 +26,7 @@ export const initialSkills:Skill[] = [
         status:'Active'
     },
     {
-        id:3,
+        id:'3',
         name:'Docker',
         category:'DevOps',
         weight:3,
@@ -34,7 +34,7 @@ export const initialSkills:Skill[] = [
         status:'Active'
     },
     {
-        id:4,
+        id:'4',
         name:'MongoDB',
         category:'Database',
         weight:4,
@@ -42,7 +42,7 @@ export const initialSkills:Skill[] = [
         status:'Active'
     },
     {
-        id:5,
+        id:'5',
         name:'Python',
         category:'DataScience',
         weight:5,

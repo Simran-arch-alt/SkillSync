@@ -15,6 +15,7 @@ export interface AdminUser {
   name: string;
   email: string;
   role: string;
+  status: 'active' | 'suspended';
   university?: string;
   degree?: string;
   skills: string[];
@@ -60,6 +61,12 @@ export async function updateUserRole(userId: string, role: string): Promise<void
   return request<void>(`/admin/users/${userId}/role`, {
     method: 'PUT',
     body: JSON.stringify({ role }),
+  });
+}
+
+export async function toggleUserStatus(userId: string): Promise<{ user: AdminUser }> {
+  return request<{ user: AdminUser }>(`/admin/users/${userId}/status`, {
+    method: 'PUT',
   });
 }
 

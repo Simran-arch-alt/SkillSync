@@ -10,36 +10,19 @@ import { Notifications } from "@mui/icons-material";
 import NotificationPanel from "../../User pages/NotificationPanel";
 import ProfileMenu from "./ProfileMenu";
 import{ useNavigate } from "react-router-dom";
-import { getMe } from "../../services/authService";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Nav: React.FC = () => {
   const [anchorEl, setAnchorEl] =
     React.useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const role =
-    localStorage.getItem("role") || "student";
-
-  const [currentUser, setCurrentUser] = React.useState({
-    name: "",
-    email: "",
-    role: role as "admin" | "student",
-  });
-
-  React.useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    getMe()
-      .then((data: any) => {
-        const user = data.user || data;
-        setCurrentUser({
-          name: user.name || "",
-          email: user.email || "",
-          role: (user.role as "admin" | "student") || role,
-        });
-      })
-      .catch(() => {});
-  }, [role]);
+  const currentUser = {
+    name: user?.name || "",
+    email: user?.email || "",
+    role: (user?.role || "student") as "admin" | "student",
+  };
 
   const handleOpenNotifications = (
   event: React.MouseEvent<HTMLElement>

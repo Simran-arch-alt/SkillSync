@@ -75,4 +75,61 @@ const getMe = asyncHandler(async (req, res) => {
   return sendSuccess(res, 200, 'Current user retrieved successfully.', { user });
 });
 
-module.exports = { register, login, getMe };
+/**
+ * @desc    Update current user's profile
+ * @route   PUT /api/auth/me
+ * @access  Private
+ */
+const updateMe = asyncHandler(async (req, res) => {
+  const allowedFields = ['name', 'email', 'university', 'degree', 'graduationYear'];
+  const updates = {};
+  allowedFields.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  });
+
+  if (Object.keys(updates).length === 0) {
+    throw new AppError('No valid fields provided for update.', 400);
+  }
+
+  const user = await User.findByIdAndUpdate(req.user._id, updates, {
+    new: true,
+    runValidators: true,
+  });
+
+  return sendSuccess(res, 200, 'Profile updated successfully.', { user });
+});
+
+/**
+ * @desc    Change current user's password
+ * @route   PUT /api/auth/change-password
+ * @access  Private
+ */
+const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    throw new AppError('Both current and new password are required.', 400);
+  }
+
+  if (newPassword.length < 6) {
+    throw new AppError('New password must be at least 6 characters long.', 400);
+  }
+
+  const user = await User.findById(req.user._id).select('+password');
+  const isCorrect = await user.comparePassword(currentPassword);
+
+  if (!isCorrect) {
+    throw new AppError('Current password is incorrect.', 401);
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  const token = signToken(user._id);
+
+  return sendSuccess(res, 200, 'Password changed successfully.', { token });
+});
+
+module.exports = { register, login, getMe, updateMe, changePassword };

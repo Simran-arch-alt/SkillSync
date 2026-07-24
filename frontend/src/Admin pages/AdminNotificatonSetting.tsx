@@ -1,21 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
   Paper,
- Switch,
+  Switch,
   Button,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/UserMangement/sidebar";
 import CustomSnackbar from "../components/Common/CustomSnackbar";
+import request from "../services/api";
+
+interface NotificationSettings {
+  email: boolean;
+  registration: boolean;
+  skillLibrary: boolean;
+  reports: boolean;
+  security: boolean;
+  maintenance: boolean;
+  emailDelivery: boolean;
+  inApp: boolean;
+  sms: boolean;
+}
 
 const AdminNotificationSettings: React.FC = () => {
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] =useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<NotificationSettings>({
     email: true,
     registration: true,
     skillLibrary: true,
@@ -26,21 +42,39 @@ const AdminNotificationSettings: React.FC = () => {
     inApp: true,
     sms: false,
   });
- 
-  const handleSave =() =>{
-    setSnackbarOpen (true);
-    setTimeout(() => {
-      navigate('/admin/settings');
-    }, 2000);
 
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await request<{ settings: { notifications: NotificationSettings } }>("/admin/settings");
+        setSettings(res.settings.notifications);
+      } catch {
+        console.error("Failed to fetch settings");
+      }
+      setLoading(false);
+    };
+    fetchSettings();
+  }, []);
 
-  }
-  const handleSnackbarClose=() => {
-    setSnackbarOpen(false);
-  }
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await request("/admin/settings", {
+        method: "PUT",
+        body: JSON.stringify({ notifications: settings }),
+      });
+      setSnackbarOpen(true);
+      setTimeout(() => navigate("/admin/settings"), 2000);
+    } catch {
+      console.error("Failed to save settings");
+    }
+    setSaving(false);
+  };
+
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const handleSwitch =
-    (field: keyof typeof settings) =>
+    (field: keyof NotificationSettings) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       setSettings({
         ...settings,
@@ -48,14 +82,23 @@ const AdminNotificationSettings: React.FC = () => {
       });
     };
 
+  if (loading) {
+    return (
+      <Box display="flex" minHeight="100vh" bgcolor="#F8FAFC">
+        <Sidebar />
+        <Box flex={1} display="flex" justifyContent="center" alignItems="center">
+          <CircularProgress />
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box display="flex" minHeight="100vh" bgcolor="#F8FAFC">
       <Sidebar />
 
-      <Box flex={1} p={4} >
-        <Typography variant="h4"
-        sx={{ fontWeight: "bold", color: "#0e7075" }} mb={1}>
-        
+      <Box flex={1} p={4}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#0e7075" }} mb={1}>
           Notification Settings
         </Typography>
 
@@ -64,166 +107,79 @@ const AdminNotificationSettings: React.FC = () => {
         </Typography>
 
         <Paper sx={{ p: 4, borderRadius: 3 }}>
-
-          {/* Email */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                Email Notifications
-              </Typography>
-
-              <Typography color="#64748B">
-                Receive important notifications via email.
-              </Typography>
+              <Typography fontWeight="bold">Email Notifications</Typography>
+              <Typography color="#64748B">Receive important notifications via email.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.email}
-              onChange={handleSwitch("email")}
-            />
+            <Switch checked={settings.email} onChange={handleSwitch("email")} />
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Registration */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                User Registration Alerts
-              </Typography>
-
-              <Typography color="#64748B">
-                Notify when a new student creates an account.
-              </Typography>
+              <Typography fontWeight="bold">User Registration Alerts</Typography>
+              <Typography color="#64748B">Notify when a new student creates an account.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.registration}
-              onChange={handleSwitch("registration")}
-            />
+            <Switch checked={settings.registration} onChange={handleSwitch("registration")} />
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Skill Library */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                Skill Library Updates
-              </Typography>
-
-              <Typography color="#64748B">
-                Notify when skills are added, edited or removed.
-              </Typography>
+              <Typography fontWeight="bold">Skill Library Updates</Typography>
+              <Typography color="#64748B">Notify when skills are added, edited or removed.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.skillLibrary}
-              onChange={handleSwitch("skillLibrary")}
-            />
+            <Switch checked={settings.skillLibrary} onChange={handleSwitch("skillLibrary")} />
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Reports */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                Reports & Analytics
-              </Typography>
-
-              <Typography color="#64748B">
-                Notify when reports are generated.
-              </Typography>
+              <Typography fontWeight="bold">Reports & Analytics</Typography>
+              <Typography color="#64748B">Notify when reports are generated.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.reports}
-              onChange={handleSwitch("reports")}
-            />
+            <Switch checked={settings.reports} onChange={handleSwitch("reports")} />
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Security */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                Security Alerts
-              </Typography>
-
-              <Typography color="#64748B">
-                Notify about suspicious logins and security events.
-              </Typography>
+              <Typography fontWeight="bold">Security Alerts</Typography>
+              <Typography color="#64748B">Notify about suspicious logins and security events.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.security}
-              onChange={handleSwitch("security")}
-            />
+            <Switch checked={settings.security} onChange={handleSwitch("security")} />
           </Box>
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Maintenance */}
           <Box display="flex" justifyContent="space-between">
             <Box>
-              <Typography fontWeight="bold">
-                System Maintenance
-              </Typography>
-
-              <Typography color="#64748B">
-                Receive scheduled maintenance notifications.
-              </Typography>
+              <Typography fontWeight="bold">System Maintenance</Typography>
+              <Typography color="#64748B">Receive scheduled maintenance notifications.</Typography>
             </Box>
-
-            <Switch
-              checked={settings.maintenance}
-              onChange={handleSwitch("maintenance")}
-            />
+            <Switch checked={settings.maintenance} onChange={handleSwitch("maintenance")} />
           </Box>
 
-         
-
-          <Box
-            mt={5}
-            display="flex"
-            justifyContent="space-between"
-          >
-            <Button
-              variant="outlined"
-              onClick={() => navigate("/admin/settings")}
-            >
+          <Box mt={5} display="flex" justifyContent="space-between">
+            <Button variant="outlined" onClick={() => navigate("/admin/settings")}>
               Cancel
             </Button>
 
             <Button
               variant="contained"
               onClick={handleSave}
-              sx={{
-                bgcolor: "#119DA4",
-                "&:hover": {
-                  bgcolor: "#0E7F84",
-                },
-              }}
+              disabled={saving}
+              sx={{ bgcolor: "#119DA4", "&:hover": { bgcolor: "#0E7F84" } }}
             >
-              Save Changes
+              {saving ? 'Saving...' : 'Save Changes'}
             </Button>
-           
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-               
 
-                <CustomSnackbar
-
-                    open={snackbarOpen}
-                    message="Notification settings saved succesfully!"
-                    severity="success"
-                    onClose={handleSnackbarClose}
-                    />
-                    </Box>
-                   
-
-
+            <CustomSnackbar open={snackbarOpen} message="Notification settings saved successfully!" severity="success" onClose={handleSnackbarClose} />
           </Box>
         </Paper>
       </Box>

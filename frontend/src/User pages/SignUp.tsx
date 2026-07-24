@@ -12,7 +12,8 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff, AutoGraph } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../services/authService';
+import { register, login as loginApi } from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 
 const dashboardColors = {
   primary: '#119DA4',
@@ -21,6 +22,7 @@ const dashboardColors = {
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -58,7 +60,9 @@ const Signup = () => {
     setLoading(true);
     try {
       await register({ name, email, password });
-      navigate('/login');
+      const loginData = await loginApi(email, password);
+      authLogin(loginData.token, { ...loginData.user, role: loginData.user.role as 'student' | 'admin' });
+      navigate('/cv-scanner');
     } catch (err: any) {
       setError(err?.message || 'Registration failed. Please try again.');
     } finally {

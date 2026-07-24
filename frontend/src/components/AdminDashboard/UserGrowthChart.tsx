@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Typography, CircularProgress, Box } from "@mui/material";
 import { LineChart } from "@mui/x-charts/LineChart";
-
-import CardContainer from "../Common/CardContainer";
 import { getAdminStats } from "../../services/adminService";
 
 const UserGrowthChart = () => {
@@ -38,27 +36,60 @@ const UserGrowthChart = () => {
   }, []);
 
   if (loading) {
-    return <CardContainer><Box sx={{ display: "flex", justifyContent: "center", py: 4 }}><CircularProgress /></Box></CardContainer>;
+    return (
+      <Box sx={{ p: 4, borderRadius: 4, border: "1px solid #E2E8F0", bgcolor: "#FFFFFF", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", display: "flex", justifyContent: "center", py: 6 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return (
-    <CardContainer>
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: "bold",
-          color: "#0F172A",
-          mb: 3,
-        }}
-      >
-        User Growth
-      </Typography>
+    <Box
+      sx={{
+        p: 3,
+        borderRadius: 4,
+        border: "1px solid #E2E8F0",
+        bgcolor: "#FFFFFF",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Box>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: "#0F172A" }}>
+            User Growth
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#94A3B8", mt: 0.5 }}>
+            Platform registrations over 7 months
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            px: 2,
+            py: 0.5,
+            borderRadius: 2,
+            bgcolor: "#DCFCE7",
+            color: "#166534",
+            fontWeight: 700,
+            fontSize: "0.8rem",
+          }}
+        >
+          Live
+        </Box>
+      </Box>
 
       <LineChart
         xAxis={[
           {
             scaleType: "point",
             data: months,
+            tickLabelStyle: { fill: "#94A3B8", fontSize: 11 },
+          },
+        ]}
+        yAxis={[
+          {
+            tickLabelStyle: { fill: "#94A3B8", fontSize: 11 },
           },
         ]}
         series={[
@@ -67,18 +98,13 @@ const UserGrowthChart = () => {
             label: "Users",
             color: "#119DA4",
             curve: "monotoneX",
+            area: true,
           },
         ]}
-        height={320}
-        margin={{
-          left: 50,
-          right: 20,
-          top: 20,
-          bottom: 40,
-        }}
+        height={260}
+        margin={{ left: 40, right: 10, top: 10, bottom: 30 }}
       />
-
-    </CardContainer>
+    </Box>
   );
 };
 

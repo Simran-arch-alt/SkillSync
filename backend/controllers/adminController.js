@@ -254,6 +254,28 @@ const updateUserRole = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc    Toggle a user's status between active and suspended
+ * @route   PUT /api/admin/users/:id/status
+ * @access  Private/Admin
+ */
+const toggleUserStatus = asyncHandler(async (req, res) => {
+  if (req.params.id === String(req.user._id)) {
+    throw new AppError('You cannot suspend your own account.', 400);
+  }
+
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    throw new AppError('User not found.', 404);
+  }
+
+  user.status = user.status === 'active' ? 'suspended' : 'active';
+  await user.save();
+
+  return sendSuccess(res, 200, `User ${user.status === 'suspended' ? 'suspended' : 'activated'} successfully.`, { user });
+});
+
+/**
  * @desc    Delete a user account
  * @route   DELETE /api/admin/users/:id
  * @access  Private/Admin
@@ -298,6 +320,55 @@ const getAdminStats = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * @desc    Get user registration trends grouped by month
+ * @route   GET /api/admin/registration-trends
+ * @access  Private/Admin
+ */
+const getRegistrationTrends = asyncHandler(async (req, res) => {
+  const result = await User.aggregate([
+    {
+      $group: {
+        _id: {
+          year: { $year: '$createdAt' },
+          month: { $month: '$createdAt' },
+        },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { '_id.year': 1, '_id.month': 1 } },
+  ]);
+
+  const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const trends = result.map((r) => ({
+    month: monthNames[r._id.month],
+    year: r._id.year,
+    count: r.count,
+  }));
+
+  return sendSuccess(res, 200, 'Registration trends retrieved successfully.', { trends });
+});
+
+/**
+ * @desc    Get all skills across all jobs with counts
+ * @route   GET /api/admin/skills
+ * @access  Private/Admin
+ */
+const getAllSkills = asyncHandler(async (req, res) => {
+  const result = await Job.aggregate([
+    { $unwind: '$skills' },
+    { $group: { _id: '$skills', count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+  ]);
+
+  const skills = result.map((r) => ({
+    name: r._id,
+    count: r.count,
+  }));
+
+  return sendSuccess(res, 200, 'Skills retrieved successfully.', { skills });
+});
+
 module.exports = {
   createJob,
   updateJob,
@@ -307,6 +378,9 @@ module.exports = {
   getAllUsers,
   getUserById,
   updateUserRole,
+  toggleUserStatus,
   deleteUser,
   getAdminStats,
+  getRegistrationTrends,
+  getAllSkills,
 };

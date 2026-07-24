@@ -55,7 +55,10 @@ const updateProfile = asyncHandler(async (req, res) => {
  */
 const getSkills = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  return sendSuccess(res, 200, 'Skills retrieved successfully.', { skills: user.skills });
+  return sendSuccess(res, 200, 'Skills retrieved successfully.', {
+    skills: user.skills,
+    resumeSkills: user.resumeSkills || [],
+  });
 });
 
 /**
@@ -137,7 +140,9 @@ const uploadResume = asyncHandler(async (req, res) => {
       const result = JSON.parse(stdout);
       if (result.skills && result.skills.length > 0) {
         extractedSkills = normalizeSkills(result.skills);
-        user.skills = extractedSkills;
+        user.resumeSkills = extractedSkills;
+        const manualSkills = user.skills.filter((s) => !extractedSkills.includes(s));
+        user.skills = normalizeSkills([...extractedSkills, ...manualSkills]);
         await user.save();
       }
     } catch (err) {

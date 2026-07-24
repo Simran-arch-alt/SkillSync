@@ -22,9 +22,14 @@ export async function updateProfile(data: Partial<StudentProfile>): Promise<Stud
   });
 }
 
-export async function getSkills(): Promise<string[]> {
-  const res = await request<{ skills: string[] }>('/students/skills');
-  return res.skills || [];
+export interface SkillsResponse {
+  skills: string[];
+  resumeSkills: string[];
+}
+
+export async function getSkills(): Promise<SkillsResponse> {
+  const res = await request<SkillsResponse>('/students/skills');
+  return { skills: res.skills || [], resumeSkills: res.resumeSkills || [] };
 }
 
 export async function updateSkills(skills: string[]): Promise<string[]> {

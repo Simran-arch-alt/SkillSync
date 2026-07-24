@@ -15,6 +15,7 @@ import {
   Settings,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ProfileMenuProps {
   name: string;
@@ -28,6 +29,7 @@ const ProfileMenu = ({
   role,
 }: ProfileMenuProps) => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const [anchorEl, setAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -65,10 +67,8 @@ const ProfileMenu = ({
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("role");
-    localStorage.removeItem("token");
-
+    handleClose();
+    logout();
     navigate("/login");
   };
 

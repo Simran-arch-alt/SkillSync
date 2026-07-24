@@ -16,10 +16,11 @@ const { TOP_RECOMMENDATIONS_COUNT } = require('../config/constants');
  */
 const getRecommendations = asyncHandler(async (req, res) => {
   const { skills } = req.body;
+  const limit = parseInt(req.query.limit, 10) || TOP_RECOMMENDATIONS_COUNT;
 
   const jobs = await Job.find().lean();
 
-  const recommendations = rankJobsBySkillMatch(skills, jobs, TOP_RECOMMENDATIONS_COUNT);
+  const recommendations = rankJobsBySkillMatch(skills, jobs, limit);
 
   return sendSuccess(res, 200, 'Career recommendations generated successfully.', {
     inputSkills: skills,

@@ -1,0 +1,305 @@
+
+  [32m[1mVITE[22m v8.1.5[39m  [2mready in [0m[1m364[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.56.1:[1m5173[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.91:[1m5173[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[2m3:39:01 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:01 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:01 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:01 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m3:39:02 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m3:39:02 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:02 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:03 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m3:39:03 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:03 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m3:39:04 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m3:39:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:04 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:05 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m3:39:05 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:05 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:06 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:06 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+[2m3:39:21 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+      at TransformPluginContext._formatLog (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30416:39)
+      at TransformPluginContext.error (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30413:14)
+      at normalizeUrl (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27438:18)
+      at async file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27506:30
+      at async Promise.all (index 5)
+      at async TransformPluginContext.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:27474:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:30201:14)
+      at async loadAndTransform (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:20124:26)
+      at async viteTransformMiddleware (file:///C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/node_modules/vite/dist/node/chunks/node.js:24604:20)
+[2m3:39:21 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:21 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to resolve import "../../services/api" from "src/Admin pages/AdminNotificatonSetting.tsx". Does the file exist?
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx[39m:14:20
+[33m  4  |  import Sidebar from "../components/UserMangement/sidebar";
+  5  |  import CustomSnackbar from "../components/Common/CustomSnackbar";
+  6  |  import request from "../../services/api";
+     |                       ^
+  7  |  var _jsxFileName = "C:/Users/HP/Desktop/SkillSync/SkillSync/frontend/src/Admin pages/AdminNotificatonSetting.tsx";
+  8  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";[39m
+[2m3:39:47 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx[22m
+[2m3:42:47 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/Admin pages/AdminProfile.tsx[22m
+[2m3:43:14 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/AdminProfile/AdminProfileCard.tsx[22m
+[2m3:43:15 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m3:43:22 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mdependencies optimized: [33m@mui/icons-material/CalendarToday, @mui/icons-material/School[32m[39m
+[2m3:43:22 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32moptimized dependencies changed. reloading[39m
+[2m3:43:37 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/AdminProfile/PersonalInformationCard.tsx[22m
+[2m3:46:47 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/User pages/Login.tsx, /src/contexts/AuthContext.tsx, /src/User pages/SignUp.tsx, /src/components/UserMangement/AddUserDialog.tsx, /src/components/AdminDashboard/DashboardHeader.tsx, /src/Admin pages/AdminProfile.tsx[22m
+[2m3:46:47 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/contexts/AuthContext.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m3:46:47 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/User pages/Dashboard.tsx, /src/User pages/ProfileSettings.tsx, /src/User pages/Login.tsx, /src/User pages/MySkillProfile.tsx, /src/components/Common/ProtectedRoute.tsx, /src/User pages/SignUp.tsx, /src/components/Nav/Nav.tsx, /src/components/Nav/Sidebar.tsx, /src/components/Nav/ProfileMenu.tsx[22m
+[2m3:47:42 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/components/AdminDashboard/DashboardHeader.tsx[22m
+[2m3:47:59 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/contexts/AuthContext.tsx[22m
+[2m3:47:59 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [33mhmr invalidate [39m[2m/src/contexts/AuthContext.tsx[22m Could not Fast Refresh ("useAuth" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m3:47:59 PM[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/User pages/Dashboard.tsx, /src/User pages/ProfileSettings.tsx, /src/User pages/Login.tsx, /src/User pages/MySkillProfile.tsx, /src/components/Common/ProtectedRoute.tsx, /src/User pages/SignUp.tsx, /src/components/Nav/Nav.tsx, /src/components/Nav/Sidebar.tsx, /src/components/Nav/ProfileMenu.tsx[22m

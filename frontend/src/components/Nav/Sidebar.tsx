@@ -13,9 +13,11 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
     const location =useLocation();
     
     const activeStyle={
@@ -24,17 +26,15 @@ const Sidebar = () => {
     };
 
   const goHome = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("role");
-    localStorage.removeItem("token");
+    logout();
     navigate("/login");
   };
   const goToDashboard = () => navigate("/dashboard");
   const goToSkillProfile = () => navigate("/my-skill-profile");
   const goToSettings = () => navigate("/settings");
   const goToJobRoles = () => navigate("/job-roles");
-  const goToAlignmentResults = () => navigate("/alignment-results");
-  const goToLearningRoadmap = () => navigate("/learning-roadmap", { state: { roleTitle: 'My Role' } });
+  const goToAlignmentResults = () => navigate("/job-roles");
+  const goToLearningRoadmap = () => navigate("/job-roles");
 
 
   return (

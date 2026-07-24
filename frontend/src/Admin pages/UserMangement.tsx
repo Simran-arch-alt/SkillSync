@@ -13,7 +13,7 @@ import ConfirmDialog from "../components/UserMangement/ConfirmDialog";
 import AddUserDialog from "../components/UserMangement/AddUserDialog";
 
 import UserHeader from "../components/UserMangement/Userheader";
-import { getAllUsers, deleteUser } from "../services/adminService";
+import { getAllUsers, deleteUser, toggleUserStatus } from "../services/adminService";
 
 interface User {
   id: string;
@@ -29,7 +29,7 @@ interface User {
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [dialogType, setDialogType] = useState<"suspend" | "delete">("suspend");
+  const [dialogType, setDialogType] = useState<"suspend" | "delete" | "activate">("suspend");
   const [search, setSearch] = useState("");
   const [careerFilter, setCareerFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -56,7 +56,7 @@ const UserManagement = () => {
         qualifications: u.university || u.degree || 'N/A',
         completion: Math.min(100, (u.skills?.length || 0) * 10 + 20),
         cvUploaded: !!u.resume,
-        status: 'Active' as const,
+        status: u.status === 'suspended' ? 'Inactive' : 'Active',
         lastLogin: u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A',
       }));
       setUsers(mapped);
@@ -79,11 +79,32 @@ const UserManagement = () => {
     return matchesSearch && matchesCareer && matchesStatus;
   });
 
-  const handleAddUser = (newUser: User) => setUsers((prev) => [...prev, newUser]);
+  const handleAddUser = (newUser: any) => {
+    const mapped: User = {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      careerGoal: newUser.role === 'admin' ? 'Administrator' : 'Student',
+      qualifications: newUser.university || newUser.degree || 'N/A',
+      completion: Math.min(100, (newUser.skills?.length || 0) * 10 + 20),
+      cvUploaded: !!newUser.resume,
+      status: newUser.status === 'suspended' ? 'Inactive' : 'Active',
+      lastLogin: newUser.createdAt ? new Date(newUser.createdAt).toLocaleDateString() : 'N/A',
+    };
+    setUsers((prev) => [...prev, mapped]);
+  };
 
-  const handleSuspendUser = () => {
+  const handleSuspendUser = async () => {
     if (!selectedUser) return;
-    setUsers((prev) => prev.map((user) => user.id === selectedUser.id ? { ...user, status: "Inactive" } : user));
+    try {
+      const { user } = await toggleUserStatus(selectedUser.id);
+      setUsers((prev) => prev.map((u) => u.id === selectedUser.id
+        ? { ...u, status: user.status === 'suspended' ? 'Inactive' : 'Active' }
+        : u
+      ));
+    } catch {
+      console.error('Failed to suspend user');
+    }
     setOpenConfirmDialog(false);
   };
 
@@ -113,8 +134,8 @@ const UserManagement = () => {
             <UserTable users={filteredUsers} page={page} rowsPerPage={rowsPerPage} onPageChange={(_, newPage) => setPage(newPage)} onRowsPerPageChange={(event) => { setRowsPerPage(parseInt(event.target.value)); setPage(0); }} onMenueOpen={handleMenuOpen} />
           </Box>
         </Box>
-        <Useractionmenu anchorEl={anchorEl} open={openMenu} onClose={handleMenuClose} onSuspend={() => { setDialogType("suspend"); setOpenConfirmDialog(true); }} onDelete={() => { setDialogType("delete"); setOpenConfirmDialog(true); }} />
-        <ConfirmDialog open={openConfirmDialog} title={dialogType === "suspend" ? "Suspend Account" : "Delete Account"} message={dialogType === "suspend" ? "Are you sure you want to suspend this account?" : "Are you sure you want to delete this account?"} confirmText={dialogType === "suspend" ? "Suspend" : "Delete"} onClose={() => setOpenConfirmDialog(false)} onConfirm={dialogType === "suspend" ? handleSuspendUser : handleDeleteUser} />
+        <Useractionmenu anchorEl={anchorEl} open={openMenu} onClose={handleMenuClose} userStatus={selectedUser?.status} onSuspend={() => { setDialogType(selectedUser?.status === "Inactive" ? "activate" : "suspend"); setOpenConfirmDialog(true); }} onDelete={() => { setDialogType("delete"); setOpenConfirmDialog(true); }} />
+        <ConfirmDialog open={openConfirmDialog} title={dialogType === "suspend" ? "Suspend Account" : dialogType === "activate" ? "Activate Account" : "Delete Account"} message={dialogType === "suspend" ? "Are you sure you want to suspend this account?" : dialogType === "activate" ? "Are you sure you want to activate this account?" : "Are you sure you want to delete this account?"} confirmText={dialogType === "suspend" ? "Suspend" : dialogType === "activate" ? "Activate" : "Delete"} onClose={() => setOpenConfirmDialog(false)} onConfirm={dialogType === "delete" ? handleDeleteUser : handleSuspendUser} />
         <AddUserDialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} onAddUser={handleAddUser} />
       </Box>
     </Box>

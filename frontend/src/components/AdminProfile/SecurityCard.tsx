@@ -15,58 +15,51 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CustomSnackbar from "../Common/CustomSnackbar";
 
 import CardContainer from "../Common/CardContainer";
+import request from "../../services/api";
 
 const SecurityCard = () => {
-
-  // ==========================
-  // Password States
-  // ==========================
-
   const [currentPassword, setCurrentPassword] = useState("");
-
   const [newPassword, setNewPassword] = useState("");
-
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Show / Hide Password
-
   const [showCurrent, setShowCurrent] = useState(false);
-
   const [showNew, setShowNew] = useState(false);
-
   const [showConfirm, setShowConfirm] = useState(false);
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-  // Change Password
+  const [snackbarMsg, setSnackbarMsg] = useState("");
+  const [saving, setSaving] = useState(false);
 
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  const handleChangePassword = () => {
-
+  const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-
       alert("Passwords do not match.");
-
       return;
-
     }
-    console.log({
-      currentPassword,
-      newPassword,
+    if (newPassword.length < 6) {
+      alert("New password must be at least 6 characters.");
+      return;
+    }
 
-    });
-    setSnackbarOpen(true);
-
+    setSaving(true);
+    try {
+      await request("/auth/change-password", {
+        method: "PUT",
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      setSnackbarMsg("Password changed successfully!");
+      setSnackbarOpen(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setSnackbarMsg(err.message || "Failed to change password");
+      setSnackbarOpen(true);
+    }
+    setSaving(false);
   };
 
   return (
-
     <CardContainer>
-
-      {/* Title */}
-
       <Box
         sx={{
           display: "flex",
@@ -82,106 +75,67 @@ const SecurityCard = () => {
         >
           Account Security
         </Typography>
-
       </Box>
-
-      {/* Current Password */}
 
       <TextField
         fullWidth
         label="Current Password"
         type={showCurrent ? "text" : "password"}
         value={currentPassword}
-        onChange={(e) =>
-          setCurrentPassword(e.target.value)
-        }
+        onChange={(e) => setCurrentPassword(e.target.value)}
         margin="normal"
         slotProps={{
           input: {
             endAdornment: (
               <InputAdornment position="end">
-
-                <IconButton
-                  onClick={() =>
-                    setShowCurrent(!showCurrent)
-                  }
-                >
-                  {showCurrent
-                    ? <VisibilityOff />
-                    : <Visibility />}
+                <IconButton onClick={() => setShowCurrent(!showCurrent)}>
+                  {showCurrent ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
-
               </InputAdornment>
             ),
           },
         }}
       />
-
-      {/* New Password */}
 
       <TextField
         fullWidth
         label="New Password"
         type={showNew ? "text" : "password"}
         value={newPassword}
-        onChange={(e) =>
-          setNewPassword(e.target.value)
-        }
+        onChange={(e) => setNewPassword(e.target.value)}
         margin="normal"
         slotProps={{
           input: {
             endAdornment: (
               <InputAdornment position="end">
-
-                <IconButton
-                  onClick={() =>
-                    setShowNew(!showNew)
-                  }
-                >
-                  {showNew
-                    ? <VisibilityOff />
-                    : <Visibility />}
+                <IconButton onClick={() => setShowNew(!showNew)}>
+                  {showNew ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
-
               </InputAdornment>
             ),
           },
         }}
       />
-
-      {/* Confirm Password */}
 
       <TextField
         fullWidth
         label="Confirm Password"
         type={showConfirm ? "text" : "password"}
         value={confirmPassword}
-        onChange={(e) =>
-          setConfirmPassword(e.target.value)
-        }
+        onChange={(e) => setConfirmPassword(e.target.value)}
         margin="normal"
         slotProps={{
           input: {
             endAdornment: (
               <InputAdornment position="end">
-
-                <IconButton
-                  onClick={() =>
-                    setShowConfirm(!showConfirm)
-                  }
-                >
-                  {showConfirm
-                    ? <VisibilityOff />
-                    : <Visibility />}
+                <IconButton onClick={() => setShowConfirm(!showConfirm)}>
+                  {showConfirm ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
-
               </InputAdornment>
             ),
           },
         }}
       />
-
-      {/* Button */}
 
       <Box
         sx={{
@@ -193,33 +147,29 @@ const SecurityCard = () => {
         <Button
           variant="contained"
           onClick={handleChangePassword}
+          disabled={saving}
           sx={{
             bgcolor: "#119DA4",
             textTransform: "none",
             fontWeight: "bold",
-
             "&:hover": {
               bgcolor: "#0F766E",
             },
           }}
         >
-          Change Password
+          {saving ? 'Changing...' : 'Change Password'}
         </Button>
-
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-  <CustomSnackbar
-    open={snackbarOpen}
-    message="Password changed successfully!"
-    severity="success"
-    onClose={handleSnackbarClose}
-  />
-</Box>
-
+        <CustomSnackbar
+          open={snackbarOpen}
+          message={snackbarMsg}
+          severity={snackbarMsg.includes('Failed') ? 'error' : 'success'}
+          onClose={handleSnackbarClose}
+        />
+      </Box>
     </CardContainer>
-
   );
-
 };
 
 export default SecurityCard;

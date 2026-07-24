@@ -13,11 +13,11 @@ import AddSkillDialog from "../components/Skill/AddSkillDialog";
 import ConfirmDialog from "../components/UserMangement/ConfirmDialog";
 import EditSkillDialog from "../components/Skill/EditSkillDialog";
 
-import { getTopSkills } from "../services/dashboardService";
+import request from "../services/api";
 
 interface Skill {
   name: string;
-  id: number;
+  id: string;
   category: "Frontend" | "Backend" | "DevOps" | "Database" | "DataScience" | "Cloud";
   weight: number;
   assignedUsers: number;
@@ -47,24 +47,25 @@ const SkillLibrary = () => {
   const menuOpen = Boolean(anchorEl);
 
   useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const topSkills = await getTopSkills(50);
-        const mapped: Skill[] = topSkills.map((s, i) => ({
-          name: s.skill,
-          id: i,
-          category: categoryMap[s.skill.toLowerCase()] || "Backend",
-          weight: Math.min(5, Math.ceil(s.count / 10)),
-          assignedUsers: s.count,
-          status: "Active" as const,
-        }));
-        setSkills(mapped);
-      } catch {
-        console.error("Failed to fetch skills");
-      }
-    };
     fetchSkills();
   }, []);
+
+  const fetchSkills = async () => {
+    try {
+      const res = await request<{ skills: { name: string; count: number }[] }>("/admin/skills");
+      const mapped: Skill[] = res.skills.map((s) => ({
+        name: s.name,
+        id: s.name,
+        category: categoryMap[s.name.toLowerCase()] || "Backend",
+        weight: Math.min(1, s.count / 500),
+        assignedUsers: s.count,
+        status: "Active" as const,
+      }));
+      setSkills(mapped);
+    } catch {
+      console.error("Failed to fetch skills");
+    }
+  };
 
   const filteredSkills = skills.filter((skill) => {
     const matchesSearch = skill.name.toLowerCase().includes(search.toLowerCase());
@@ -76,7 +77,7 @@ const SkillLibrary = () => {
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, skill: Skill) => { setAnchorEl(event.currentTarget); setSelectedSkill(skill); };
   const handleMenuClose = () => setAnchorEl(null);
   const handleAddSkill = (newSkill: Skill) => setSkills((prev) => [...prev, newSkill]);
-  const handleWeightChange = (id: number, newWeight: number) => setSkills((prev) => prev.map((skill) => skill.id === id ? { ...skill, weight: newWeight } : skill));
+  const handleWeightChange = (id: string, newWeight: number) => setSkills((prev) => prev.map((skill) => skill.id === id ? { ...skill, weight: newWeight } : skill));
   const handleUpdateSkill = (updatedSkill: Skill) => { setSkills((prev) => prev.map((skill) => skill.id === updatedSkill.id ? updatedSkill : skill)); setOpenEdit(false); };
   const handleToggleStatus = () => { if (!selectedSkill) return; setSkills((prev) => prev.map((skill) => skill.id === selectedSkill.id ? { ...skill, status: skill.status === "Active" ? "Inactive" : "Active" } : skill)); };
   const handleEditSkill = () => setOpenEdit(true);

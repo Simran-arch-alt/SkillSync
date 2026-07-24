@@ -25,7 +25,7 @@ const Footer = () => {
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* Brand column */}
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <AutoGraphIcon sx={{ fontSize: 32, color: '#FFFFFF' }} />
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#FFFFFF' }}>
@@ -47,7 +47,7 @@ const Footer = () => {
           </Grid>
 
           {/* Quick Links */}
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#ffffff', mb: 2 }}>
               Quick Links
             </Typography>
@@ -60,7 +60,7 @@ const Footer = () => {
           </Grid>
 
           {/* Resources */}
-          <Grid item xs={12} sm={6} md={2}>
+          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#ffffff', mb: 2 }}>
               Resources
             </Typography>
@@ -73,7 +73,7 @@ const Footer = () => {
           </Grid>
 
           {/* Legal & Social */}
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#ffffff', mb: 2 }}>
               Follow Us
             </Typography>

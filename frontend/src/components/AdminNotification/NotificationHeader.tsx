@@ -1,7 +1,11 @@
 import { Box, Typography, Button } from "@mui/material";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 
-const NotificationHeader = () => {
+interface NotificationHeaderProps {
+  onMarkAllRead?: () => void;
+}
+
+const NotificationHeader = ({ onMarkAllRead }: NotificationHeaderProps) => {
   return (
     <Box
       sx={{
@@ -46,6 +50,7 @@ const NotificationHeader = () => {
       <Button
         variant="contained"
         startIcon={<DoneAllIcon />}
+        onClick={onMarkAllRead}
         sx={{
           bgcolor: "#119DA4",
           color: "#FFFFFF",

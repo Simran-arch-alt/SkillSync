@@ -10,12 +10,12 @@ import {
   Stack,
 } from "@mui/material";
 
-import type  { User } from "../../data/users";
+import { register } from "../../services/authService";
 
 interface AddUserDialogProps {
   open: boolean;
   onClose: () => void;
-  onAddUser: (user: User) => void;
+  onAddUser: (user: any) => void;
 }
 
 const AddUserDialog = ({
@@ -23,61 +23,37 @@ const AddUserDialog = ({
   onClose,
   onAddUser,
 }: AddUserDialogProps) => {
-  /* ----------------------------
-      Form States
-  ----------------------------- */
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [careerGoal, setCareerGoal] = useState("");
-  const [qualification, setQualification] = useState("");
-  const [status, setStatus] = useState<"Active" | "Inactive">("Active");
+  const [password, setPassword] = useState("");
+  const [university, setUniversity] = useState("");
+  const [degree, setDegree] = useState("");
+  const [error, setError] = useState("");
 
-  /* ----------------------------
-      Add User
-  ----------------------------- */
-
-  const handleAddUser = () => {
-    // Simple validation
-    if (
-      !name ||
-      !email ||
-      !careerGoal ||
-      !qualification
-    ) {
+  const handleAddUser = async () => {
+    if (!name || !email || !password) {
+      setError("Name, email, and password are required.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return;
     }
 
-    const newUser: User = {
-      id: String(Date.now()),
+    try {
+      const result = await register({ name, email, password, university, degree });
+      onAddUser(result.user);
 
-      name,
-
-      email,
-
-      careerGoal,
-
-      qualifications: qualification,
-
-      completion: 0,
-
-      cvUploaded: false,
-
-      status,
-
-      lastLogin: "Never",
-    };
-
-    onAddUser(newUser);
-
-    // Clear form
-    setName("");
-    setEmail("");
-    setCareerGoal("");
-    setQualification("");
-    setStatus("Active");
-
-    onClose();
+      setName("");
+      setEmail("");
+      setPassword("");
+      setUniversity("");
+      setDegree("");
+      setError("");
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to create user");
+    }
   };
 
   return (
@@ -88,112 +64,43 @@ const AddUserDialog = ({
       fullWidth
       slotProps={{
         paper: {
-          sx: {
-            borderRadius: 3,
-          },
+          sx: { borderRadius: 3 },
         },
       }}
     >
-      {/* Title */}
-      <DialogTitle
-        sx={{
-          fontWeight: "bold",
-        }}
-      >
-        Add New User
-      </DialogTitle>
+      <DialogTitle sx={{ fontWeight: "bold" }}>Add New User</DialogTitle>
 
-      {/* Form */}
       <DialogContent>
-        <Stack spacing={2} 
-        sx={{ mt: 1 }}>
-          {/* Name */}
-          <TextField
-            label="Full Name"
-            value={name}
-            onChange={(e) =>
-              setName(e.target.value)
-            }
-            fullWidth
-          />
-
-          {/* Email */}
-          <TextField
-            label="Email"
-            value={email}
-            onChange={(e) =>
-              setEmail(e.target.value)
-            }
-            fullWidth
-          />
-
-          {/* Career Goal */}
-          <TextField
-            label="Career Goal"
-            value={careerGoal}
-            onChange={(e) =>
-              setCareerGoal(e.target.value)
-            }
-            fullWidth
-          />
-
-          {/* Qualification */}
-          <TextField
-            label="Qualification"
-            value={qualification}
-            onChange={(e) =>
-              setQualification(e.target.value)
-            }
-            fullWidth
-          />
-
-          {/* Status */}
-          <TextField
-            select
-            label="Account Status"
-            value={status}
-            onChange={(e) =>
-              setStatus(
-                e.target.value as
-                  | "Active"
-                  | "Inactive"
-              )
-            }
-            fullWidth
-          >
-            <MenuItem value="Active">
-              Active
-            </MenuItem>
-
-            <MenuItem value="Inactive">
-              Inactive
-            </MenuItem>
-          </TextField>
+        <Stack spacing={2} sx={{ mt: 1 }}>
+          {error && (
+            <TextField
+              error
+              value={error}
+              variant="standard"
+              fullWidth
+              slotProps={{ input: { readOnly: true } }}
+              sx={{ "& .MuiInput-root": { color: "error.main" } }}
+            />
+          )}
+          <TextField label="Full Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
+          <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} fullWidth />
+          <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} fullWidth helperText="Minimum 6 characters" />
+          <TextField label="University" value={university} onChange={(e) => setUniversity(e.target.value)} fullWidth />
+          <TextField label="Degree" value={degree} onChange={(e) => setDegree(e.target.value)} fullWidth />
         </Stack>
       </DialogContent>
 
-      {/* Buttons */}
       <DialogActions sx={{ p: 3 }}>
-        <Button
-          onClick={onClose}
-          variant="outlined"
-          sx={{
-            textTransform: "none",
-          }}
-        >
+        <Button onClick={onClose} variant="outlined" sx={{ textTransform: "none" }}>
           Cancel
         </Button>
-
         <Button
           variant="contained"
           onClick={handleAddUser}
           sx={{
             bgcolor: "#119DA4",
             textTransform: "none",
-
-            "&:hover": {
-              bgcolor: "#19647E",
-            },
+            "&:hover": { bgcolor: "#19647E" },
           }}
         >
           Add User

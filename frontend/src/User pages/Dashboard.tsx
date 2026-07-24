@@ -18,10 +18,11 @@ import {LinearProgress, CircularProgress, Chip, Divider, Button} from "@mui/mate
 
 import {useNavigate} from 'react-router-dom';
 import {useState, useEffect} from 'react';
-import { getProfile, getSkills } from '../services/studentService';
-import { getTopRecommendedJobs, getTopSkills, getDashboardSummary } from '../services/dashboardService';
+import { getSkills } from '../services/studentService';
+import { getTopRecommendedJobs, getTopSkills } from '../services/dashboardService';
 import type { TopRecommendation } from '../services/dashboardService';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Activity {
     id: number;
@@ -37,7 +38,7 @@ interface SkillGap {
 
 const Dashboard=() =>{
     const navigate = useNavigate();
-    const [userName, setUserName] = useState('User');
+    const { user } = useAuth();
     const [userSkills, setUserSkills] = useState<string[]>([]);
     const [recommendedRoles, setRecommendedRoles] = useState<TopRecommendation[]>([]);
     const [loadingRoles, setLoadingRoles] = useState(true);
@@ -45,49 +46,41 @@ const Dashboard=() =>{
     const [recentActivity, setRecentActivity] = useState<Activity[]>([]);
     const [profilePercent, setProfilePercent] = useState(0);
 
+    const userName = user?.name || 'User';
+
     useEffect(() => {
         const fetchData = async () => {
+            let completed = 0;
+            let total = 6;
+            if (user?.name) completed++;
+            if (user?.email) completed++;
+            if (user?.university) completed++;
+            if (user?.degree) completed++;
+
             try {
-                const profile = await getProfile() as any;
-                const user = profile?.user || profile;
-                setUserName(user?.name || 'User');
-
-                // Calculate profile completion
-                let completed = 0;
-                let total = 5;
-                if (user?.name) completed++;
-                if (user?.email) completed++;
-                if (user?.university) completed++;
-                if (user?.degree) completed++;
-                try {
-                    const skills = await getSkills();
-                    if (Array.isArray(skills) && skills.length > 0) {
-                        completed++;
-                        setUserSkills(skills);
-                    }
-                    total = 6;
-                    setProfilePercent(Math.round((completed / total) * 100));
-                } catch {
-                    setProfilePercent(Math.round((completed / total) * 100));
+                const { skills } = await getSkills();
+                if (Array.isArray(skills) && skills.length > 0) {
+                    completed++;
+                    setUserSkills(skills);
                 }
-
-                // Build recent activity from profile data
-                const activities: Activity[] = [];
-                let actId = 1;
-                if (user?.name) {
-                    activities.push({ id: actId++, type: 'skill' as const, text: `Profile created for ${user.name}`, time: 'Account created' });
-                }
-                if (user?.university) {
-                    activities.push({ id: actId++, type: 'view' as const, text: `University: ${user.university}`, time: 'Profile detail' });
-                }
-                if (user?.degree) {
-                    activities.push({ id: actId++, type: 'course' as const, text: `Degree: ${user.degree}`, time: 'Profile detail' });
-                }
-                setRecentActivity(activities);
+                setProfilePercent(Math.round((completed / total) * 100));
             } catch {
-                const stored = localStorage.getItem('rememberedUser');
-                if (stored) setUserName(stored);
+                setProfilePercent(Math.round((completed / total) * 100));
             }
+
+            const activities: Activity[] = [];
+            let actId = 1;
+            if (user?.name) {
+                activities.push({ id: actId++, type: 'skill' as const, text: `Profile created for ${user.name}`, time: 'Account created' });
+            }
+            if (user?.university) {
+                activities.push({ id: actId++, type: 'view' as const, text: `University: ${user.university}`, time: 'Profile detail' });
+            }
+            if (user?.degree) {
+                activities.push({ id: actId++, type: 'course' as const, text: `Degree: ${user.degree}`, time: 'Profile detail' });
+            }
+            setRecentActivity(activities);
+
             try {
                 const roles = await getTopRecommendedJobs();
                 setRecommendedRoles(roles.filter(r => r.score > 0));
@@ -97,11 +90,10 @@ const Dashboard=() =>{
                 setLoadingRoles(false);
             }
 
-            // Fetch skill gaps from top skills in the job market
             try {
                 const topSkills = await getTopSkills(10);
-                const userSkills = await getSkills().catch(() => []);
-                const userSkillSet = new Set((Array.isArray(userSkills) ? userSkills : []).map((s: string) => s.toLowerCase()));
+                const userSkillsArr = await getSkills().catch(() => ({ skills: [] as string[] }));
+                const userSkillSet = new Set((Array.isArray(userSkillsArr.skills) ? userSkillsArr.skills : []).map((s: string) => s.toLowerCase()));
                 const gaps: SkillGap[] = topSkills
                     .filter(s => !userSkillSet.has(s.skill.toLowerCase()))
                     .slice(0, 6)
@@ -115,12 +107,13 @@ const Dashboard=() =>{
             }
         };
         fetchData();
-    }, []);
+    }, [user]);
     
     const handleViewDetails = (role: TopRecommendation) => {
         navigate('/alignment-results', {
             state: {
                 roleTitle: role.job,
+                jobId: role.jobId,
                 from: 'dashboard',
             },
         });

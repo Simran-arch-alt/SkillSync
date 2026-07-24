@@ -13,13 +13,17 @@ import JobRoleActionMenu from "../components/JobRoles/JobRoleActionMenu";
 import ConfirmDialog from "../components/Common/ConfirmDialog";
 import EditJobRoleDialog from "../components/JobRoles/EditJobRoleDialog";
 
+import { createJob, updateJob } from "../services/adminService";
 import request from "../services/api";
 import type { JobRole } from "../data/jobRoles";
 
 interface ApiJob {
   _id: string;
   job_title: string;
+  company?: string;
+  location?: string;
   role_category?: string;
+  seniority_level?: string;
   skills?: string[];
 }
 
@@ -44,18 +48,19 @@ const AdminJobRoles = () => {
     fetchJobs();
   }, []);
 
+  const mapJobToRole = (j: ApiJob): JobRole => ({
+    id: j._id,
+    name: j.job_title,
+    category: (j.role_category?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || "General") as JobRole["category"],
+    requiredSkills: j.skills || [],
+    students: 0,
+    status: "Active" as const,
+  });
+
   const fetchJobs = async () => {
     try {
       const res = await request<JobsResponse>("/jobs?limit=200");
-      const mapped: JobRole[] = res.jobs.map((j) => ({
-        id: j._id,
-        name: j.job_title,
-        category: (j.role_category?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || "General") as JobRole["category"],
-        requiredSkills: j.skills || [],
-        students: 0,
-        status: "Active" as const,
-      }));
-      setRoles(mapped);
+      setRoles(res.jobs.map(mapJobToRole));
     } catch {
       console.error("Failed to fetch jobs");
     }
@@ -72,10 +77,38 @@ const AdminJobRoles = () => {
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => { setRowsPerPage(Number(event.target.value)); setPage(0); };
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, role: JobRole) => { setAnchorEl(event.currentTarget); setSelectedRole(role); };
   const handleMenuClose = () => setAnchorEl(null);
-  const handleAddRole = (newRole: JobRole) => setRoles((prev) => [...prev, newRole]);
 
-  const handleUpdateJobRole = (updatedRole: JobRole) => {
-    setRoles((prev) => prev.map((role) => role.id === updatedRole.id ? updatedRole : role));
+  const handleAddRole = async (formData: { name: string; category: string; skills: string }) => {
+    try {
+      const created = await createJob({
+        job_title: formData.name,
+        role_category: formData.category.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_'),
+        skills: formData.skills.split(",").map((s) => s.trim()).filter(Boolean),
+      });
+      setRoles((prev) => [...prev, {
+        id: created._id,
+        name: created.job_title,
+        category: (created.role_category?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || "General") as JobRole["category"],
+        requiredSkills: created.skills || [],
+        students: 0,
+        status: "Active",
+      }]);
+    } catch {
+      console.error("Failed to create job");
+    }
+  };
+
+  const handleUpdateJobRole = async (updatedRole: JobRole) => {
+    try {
+      await updateJob(updatedRole.id, {
+        job_title: updatedRole.name,
+        role_category: updatedRole.category.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_'),
+        skills: updatedRole.requiredSkills,
+      });
+      setRoles((prev) => prev.map((role) => role.id === updatedRole.id ? updatedRole : role));
+    } catch {
+      console.error("Failed to update job");
+    }
     setOpenEditDialog(false);
   };
 

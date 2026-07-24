@@ -14,12 +14,10 @@ import {
   TextField,
 } from "@mui/material";
 
-import type { JobRole } from "../../data/jobRoles";
-
 interface AddJobRoleDialogProps {
   open: boolean;
   onClose: () => void;
-  onAddRole: (role: JobRole) => void;
+  onAddRole: (data: { name: string; category: string; skills: string }) => void;
 }
 
 const AddJobRoleDialog = ({
@@ -28,31 +26,17 @@ const AddJobRoleDialog = ({
   onAddRole,
 }: AddJobRoleDialogProps) => {
   const [role, setRole] = useState("");
-  const [category, setCategory] = useState<JobRole["category"]>("Web Development");
+  const [category, setCategory] = useState("Web Development");
   const [skills, setSkills] = useState("");
-  const [students, setStudents] = useState(0);
-  const [status, setStatus] = useState<"Active" | "Inactive">("Active");
 
   const handleSubmit = () => {
     if (!role || !category || !skills) return;
 
-    onAddRole({
-      id: String(Date.now()),
-      name: role,
-      category,
-      requiredSkills: skills
-        .split(",")
-        .map((skill) => skill.trim()),
-      students,
-      status,
-    });
+    onAddRole({ name: role, category, skills });
 
     setRole("");
     setCategory("Web Development");
     setSkills("");
-    setStudents(0);
-    setStatus("Active");
-
     onClose();
   };
 
@@ -115,40 +99,6 @@ const AddJobRoleDialog = ({
               setSkills(e.target.value)
             }
           />
-
-          <TextField
-            label="Interested Students"
-            type="number"
-            fullWidth
-            value={students}
-            onChange={(e) =>
-              setStudents(Number(e.target.value))
-            }
-          />
-
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-
-            <Select
-              label="Status"
-              value={status}
-              onChange={(e) =>
-                setStatus(
-                  e.target.value as
-                    | "Active"
-                    | "Inactive"
-                )
-              }
-            >
-              <MenuItem value="Active">
-                Active
-              </MenuItem>
-
-              <MenuItem value="Inactive">
-                Inactive
-              </MenuItem>
-            </Select>
-          </FormControl>
         </Stack>
       </DialogContent>
 

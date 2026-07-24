@@ -2,9 +2,30 @@ import {Box, Typography, TextField, Button,Paper,
     
 } from '@mui/material';
 import{useNavigate} from 'react-router-dom';
+import {useState} from 'react';
+import { updateProfile } from '../services/studentService';
 
 const CvScanner =() =>{
     const navigate =useNavigate();
+    const [specialization, setSpecialization] = useState('');
+    const [qualification, setQualification] = useState('');
+    const [saving, setSaving] = useState(false);
+
+    const handleNext = async () => {
+        setSaving(true);
+        try {
+            await updateProfile({
+                degree: specialization,
+                university: qualification,
+            } as any);
+            navigate('/cv-upload');
+        } catch {
+            navigate('/cv-upload');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
         <Box sx={{
             minHeight:'100vh',
@@ -88,7 +109,7 @@ const CvScanner =() =>{
     sx={{
       width: '100vh',
       height: 2,
-      bgcolor: "#19647E",
+      bgcolor: "#CBD5E1",
       mt: 3,
     }}
   />
@@ -136,6 +157,8 @@ const CvScanner =() =>{
   placeholder="e.g. Software Engineering, Data Science, Cybersecurity..."
   fullWidth
   variant="outlined"
+  value={specialization}
+  onChange={(e) => setSpecialization(e.target.value)}
   sx={{
     width :'90%',
     bgcolor:'#F8FAFC',
@@ -166,6 +189,8 @@ const CvScanner =() =>{
   placeholder="e.g. Final year, Graduate, Postgraduate ..."
   fullWidth
   variant="outlined"
+  value={qualification}
+  onChange={(e) => setQualification(e.target.value)}
   sx={{
     width :'90%',
     bgcolor:'#F8FAFC',
@@ -185,9 +210,9 @@ const CvScanner =() =>{
     mt:3,
   }}>
 
-  <Button type="Back"
+  <Button
   onClick ={()=> navigate('/login')}
-  fullWidth variant="contained"
+  variant="contained"
   sx={{
     bgcolor:'#FFFFFF',
     py:1.5,
@@ -203,9 +228,10 @@ const CvScanner =() =>{
   }}>Back
     </Button>
 
-    <Button type="Next"
-    onClick ={()=> navigate('/cv-upload')}
-    fullWidth variant="contained"
+    <Button
+    onClick ={handleNext}
+    disabled={saving}
+    variant="contained"
     sx={{
         bgcolor:'#119DA4',
         py:1.5,
@@ -214,8 +240,9 @@ const CvScanner =() =>{
         width:'20%',
         mt:2,
         display:'flex',
+        '&.Mui-disabled': { bgcolor: '#94A3B8', color: '#FFFFFF' },
     }}>
-        Next
+        {saving ? 'Saving...' : 'Next'}
     </Button>
     </Box>
 
@@ -224,13 +251,7 @@ const CvScanner =() =>{
 
 
 
-
             </Paper>
-
-            
-
-
-
 
 
 

@@ -5,6 +5,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Nav from "../components/Nav/Nav";
 import { useState, useEffect } from "react";
 import { getSkills } from "../services/studentService";
+import { searchJobs, getJobById } from "../services/jobService";
 
 interface AlignmentData {
   score: number;
@@ -20,75 +21,50 @@ const AlignmentResults = () => {
 
   const from = location.state?.from;
   const selectedRole = location.state?.roleTitle;
+  const selectedJobId = location.state?.jobId;
 
   useEffect(() => {
+    if (!selectedRole) {
+      navigate('/job-roles');
+      return;
+    }
+
     const fetchAlignment = async () => {
       try {
-        const userSkills = await getSkills();
-        const skillsArray = Array.isArray(userSkills) ? userSkills : [];
+        const { skills: skillsArray } = await getSkills();
 
-        let roleName = selectedRole;
+        let matchingJob: any = null;
 
-        if (!roleName && skillsArray.length > 0) {
-          const recRes = await fetch('/api/recommendations', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ skills: skillsArray }),
-          });
-          const recJson = await recRes.json();
-          if (recJson.success && recJson.data?.recommendations?.length > 0) {
-            roleName = recJson.data.recommendations[0].job;
-            setAlignmentData({
-              score: Math.round(recJson.data.recommendations[0].score),
-              matchedSkills: recJson.data.recommendations[0].matchedSkills || [],
-              gaps: recJson.data.recommendations[0].missingSkills || [],
-            });
-            setLoading(false);
-            return;
+        if (selectedJobId) {
+          try {
+            const jobRes = await getJobById(selectedJobId);
+            matchingJob = jobRes.job;
+          } catch {
+            // fallback to search
           }
         }
 
-        if (!roleName) {
+        if (!matchingJob && selectedRole) {
+          const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
+          matchingJob = jobRes.jobs?.find((j) => j.job_title === selectedRole);
+        }
+
+        if (matchingJob && matchingJob.skills) {
+          const jobSkills = matchingJob.skills.map((s: string) => s.toLowerCase());
+          const userSkillsLower = skillsArray.map((s) => s.toLowerCase());
+          const matched = jobSkills.filter((s: string) => userSkillsLower.includes(s));
+          const gaps = jobSkills.filter((s: string) => !userSkillsLower.includes(s));
+          const score = jobSkills.length > 0 ? Math.round((matched.length / jobSkills.length) * 100) : 0;
+          setAlignmentData({
+            score,
+            matchedSkills: matched.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
+            gaps: gaps.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
+          });
           setLoading(false);
           return;
         }
 
-        const res = await fetch('/api/jobs?limit=200');
-        const json = await res.json();
-        if (json.success && json.data?.jobs) {
-          const matchingJob = json.data.jobs.find((j: any) => j.job_title === roleName);
-          if (matchingJob && matchingJob.skills) {
-            const jobSkills = matchingJob.skills.map((s: string) => s.toLowerCase());
-            const userSkillsLower = skillsArray.map((s: string) => s.toLowerCase());
-            const matched = jobSkills.filter((s: string) => userSkillsLower.includes(s));
-            const gaps = jobSkills.filter((s: string) => !userSkillsLower.includes(s));
-            const score = jobSkills.length > 0 ? Math.round((matched.length / jobSkills.length) * 100) : 0;
-            setAlignmentData({
-              score,
-              matchedSkills: matched.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
-              gaps: gaps.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
-            });
-            setLoading(false);
-            return;
-          }
-        }
-
-        const recRes = await fetch('/api/recommendations', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ skills: skillsArray }),
-        });
-        const recJson = await recRes.json();
-        if (recJson.success && recJson.data?.recommendations) {
-          const match = recJson.data.recommendations.find((r: any) => r.job === roleName);
-          if (match) {
-            setAlignmentData({
-              score: Math.round(match.score),
-              matchedSkills: match.matchedSkills || [],
-              gaps: match.missingSkills || [],
-            });
-          }
-        }
+        setLoading(false);
       } catch (err) {
         console.error('Failed to fetch alignment:', err);
       } finally {
@@ -96,13 +72,12 @@ const AlignmentResults = () => {
       }
     };
     fetchAlignment();
-  }, [selectedRole]);
+  }, [selectedRole, selectedJobId]);
 
   const data = alignmentData;
 
   const handleBack = () => {
-    if (from === "dashboard") navigate("/dashboard");
-    else if (from === "job-roles") navigate("/job-roles");
+    navigate("/job-roles");
   };
 
   if (loading) {
@@ -190,7 +165,7 @@ const AlignmentResults = () => {
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
               <Button
                 variant="contained"
-                onClick={() => navigate("/learning-roadmap", { state: { roleTitle: selectedRole, from } })}
+                onClick={() => navigate("/learning-roadmap", { state: { roleTitle: selectedRole, jobId: selectedJobId, from } })}
                 sx={{ borderRadius: 3, px: 4, py: 1.5, background: "linear-gradient(135deg,#19647E,#119DA4)", textTransform: "none", fontWeight: "bold" }}
               >
                 Generate Learning Roadmap

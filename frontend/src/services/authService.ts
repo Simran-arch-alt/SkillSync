@@ -37,5 +37,6 @@ export async function register(data: {
 }
 
 export async function getMe(): Promise<LoginData['user']> {
-  return request<LoginData['user']>('/auth/me');
+  const res = await request<{ user: LoginData['user'] }>('/auth/me');
+  return res.user;
 }

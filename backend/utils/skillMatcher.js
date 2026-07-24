@@ -31,10 +31,12 @@ const computeSkillGap = (studentSkills = [], jobSkills = []) => {
   const matchedSkills = normalizedJobSkills.filter((skill) => studentSkillSet.has(skill));
   const missingSkills = normalizedJobSkills.filter((skill) => !studentSkillSet.has(skill));
 
-  const score =
-    normalizedJobSkills.length > 0
-      ? Math.round((matchedSkills.length / normalizedJobSkills.length) * 100 * 100) / 100
-      : 0;
+  const MIN_REQUIRED_SKILLS = 3;
+  const pct = normalizedJobSkills.length > 0
+    ? (matchedSkills.length / normalizedJobSkills.length) * 100
+    : 0;
+  const weight = Math.min(1, normalizedJobSkills.length / MIN_REQUIRED_SKILLS);
+  const score = Math.round(pct * weight * 100) / 100;
 
   return { matchedSkills, missingSkills, score };
 };

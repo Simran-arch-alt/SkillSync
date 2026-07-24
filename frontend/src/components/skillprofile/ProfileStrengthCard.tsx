@@ -3,9 +3,14 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import CardContainer from '../Common/CardContainer';
-import { getProfile, getSkills } from '../../services/studentService';
+import { getProfile } from '../../services/studentService';
+import type { Skill } from './CurrentSkillsCard';
 
-const ProfileStrengthCard = () => {
+interface ProfileStrengthCardProps {
+  skills: Skill[];
+}
+
+const ProfileStrengthCard = ({ skills }: ProfileStrengthCardProps) => {
   const [checkmarkItems, setCheckmarkItems] = useState([
     { text: "Resume skills imported", checked: false },
     { text: "At least 8 skills added", checked: false },
@@ -14,38 +19,39 @@ const ProfileStrengthCard = () => {
   const [strength, setStrength] = useState(0);
 
   useEffect(() => {
-    const fetchData = async () => {
-      let completed = 0;
-      let items = [...checkmarkItems];
-
+    const fetchProfile = async () => {
       try {
         const profile = await getProfile() as any;
         const user = profile?.user || profile;
         if (user?.name || user?.email) {
-          items[2] = { ...items[2], checked: true };
-          completed++;
+          setCheckmarkItems(prev => {
+            const updated = [...prev];
+            updated[2] = { ...updated[2], checked: true };
+            return updated;
+          });
         }
       } catch {}
-
-      try {
-        const skills = await getSkills();
-        if (Array.isArray(skills)) {
-          if (skills.length > 0) {
-            items[0] = { ...items[0], checked: true };
-            completed++;
-          }
-          if (skills.length >= 8) {
-            items[1] = { ...items[1], checked: true };
-            completed++;
-          }
-        }
-      } catch {}
-
-      setCheckmarkItems(items);
-      setStrength(Math.round((completed / 3) * 100));
     };
-    fetchData();
+    fetchProfile();
   }, []);
+
+  useEffect(() => {
+    setCheckmarkItems(prev => {
+      const hasResumeSkills = skills.length > 0 && skills.some(s => s.source === 'Resume');
+      const hasEnoughSkills = skills.length >= 8;
+      const profileSaved = prev[2].checked;
+      return [
+        { text: "Resume skills imported", checked: hasResumeSkills },
+        { text: "At least 8 skills added", checked: hasEnoughSkills },
+        { text: "Profile saved", checked: profileSaved },
+      ];
+    });
+  }, [skills]);
+
+  useEffect(() => {
+    const completed = checkmarkItems.filter(item => item.checked).length;
+    setStrength(Math.round((completed / 3) * 100));
+  }, [checkmarkItems]);
 
   return (
     <CardContainer>

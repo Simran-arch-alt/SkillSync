@@ -7,6 +7,7 @@ import {
 
 
 import BlockIcon from "@mui/icons-material/Block";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 
@@ -14,8 +15,7 @@ interface UserActionMenuProps {
   anchorEl: HTMLElement | null;
   open: boolean;
   onClose: () => void;
-
- 
+  userStatus?: "Active" | "Inactive";
   onSuspend: () => void;
   onDelete: () => void;
 }
@@ -24,10 +24,11 @@ const UserActionMenu = ({
   anchorEl,
   open,
   onClose,
- 
+  userStatus = "Active",
   onSuspend,
   onDelete,
 }: UserActionMenuProps) => {
+  const isSuspended = userStatus === "Inactive";
   return (
     <Menu
       anchorEl={anchorEl}
@@ -67,13 +68,14 @@ const UserActionMenu = ({
         }}
       >
         <ListItemIcon>
-          <BlockIcon
-            fontSize="small"
-            sx={{ color: "#F59E0B" }}
-          />
+          {isSuspended ? (
+            <CheckCircleIcon fontSize="small" sx={{ color: "#22C55E" }} />
+          ) : (
+            <BlockIcon fontSize="small" sx={{ color: "#F59E0B" }} />
+          )}
         </ListItemIcon>
 
-        <ListItemText primary="Suspend Account" />
+        <ListItemText primary={isSuspended ? "Activate Account" : "Suspend Account"} />
       </MenuItem>
 
       <MenuItem

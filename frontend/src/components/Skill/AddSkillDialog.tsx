@@ -56,7 +56,7 @@ const AddSkillDialog = ({
 
     const newSkill: Skill = {
 
-      id: Date.now(),
+      id: String(Date.now()),
 
       name: skillName,
 

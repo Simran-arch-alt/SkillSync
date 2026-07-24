@@ -14,9 +14,11 @@ import CustomSnackbar from '../components/Common/CustomSnackbar';
 
 import type { Skill } from '../components/skillprofile/CurrentSkillsCard';
 import { getSkills, addSkills, removeSkills } from '../services/studentService';
+import { useAuth } from '../contexts/AuthContext';
 
 const MySkillProfile = () => {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
@@ -26,12 +28,13 @@ const MySkillProfile = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const skills = await getSkills();
+        const { skills, resumeSkills } = await getSkills();
+        const resumeSet = new Set(resumeSkills);
         setCurrentSkills(
           skills.map((name: string, i: number) => ({
             id: i + 1,
             name,
-            source: 'Added' as const,
+            source: (resumeSet.has(name) ? 'Resume' : 'Added') as 'Resume' | 'Added',
           }))
         );
       } catch {
@@ -76,10 +79,11 @@ const MySkillProfile = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSnackbarMessage('Profile saved successfully!');
     setSnackbarSeverity('success');
     setSnackbarOpen(true);
+    await refreshUser();
     setTimeout(() => navigate('/dashboard'), 2000);
   };
 
@@ -108,7 +112,7 @@ const MySkillProfile = () => {
             </Grid>
             <Grid size={{ xs: 12, md: 5, lg: 4.5 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                <ProfileStrengthCard />
+                <ProfileStrengthCard skills={currentSkills} />
                 <SuggestedSkillsCard />
                 <CustomSnackbar open={snackbarOpen} message={snackbarMessage} severity={snackbarSeverity} onClose={() => setSnackbarOpen(false)} />
               </Box>

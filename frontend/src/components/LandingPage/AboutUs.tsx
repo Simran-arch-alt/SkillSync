@@ -68,7 +68,7 @@ const AboutUs = () => {
           <Grid container spacing={5} alignItems="center">
             {/* Left: Illustration with hover pop */}
             
-            <Grid item xs={12} md={7}>
+            <Grid size={{ xs: 12, md: 7 }}>
               {/* Mission */}
               <Box
                 sx={{

@@ -7,14 +7,12 @@ import {
   Card,
   CardContent,
   Chip,
-  CircularProgress,
   MenuItem,
   Paper,
   Select,
   Stack,
   Typography,
 } from '@mui/material';
-import type { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
 
 import Nav from '../components/Nav/Nav';
@@ -28,12 +26,16 @@ import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturi
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
+import { getJobs } from '../services/jobService';
+import type { Job } from '../services/jobService';
+
 const dashboardColors = {
   primary: '#119DA4',
   primaryDark: '#19647E',
 };
 
 interface JobRole {
+  id: string;
   title: string;
   description: string;
   label: string;
@@ -43,73 +45,111 @@ interface JobRole {
   labelBg: string;
   labelColor: string;
   category: 'tech' | 'management' | 'data';
+  skills: string[];
 }
 
 const categoryIcons: Record<string, { icon: ReactNode; bg: string; color: string }> = {
   frontend_developer: { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
   backend_developer: { icon: <StorageIcon />, bg: 'rgba(25, 100, 126, 0.08)', color: '#19647E' },
+  full_stack_developer: { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  software_engineer: { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  web_developer: { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
   data_scientist: { icon: <QueryStatsIcon />, bg: 'rgba(30, 58, 95, 0.08)', color: '#1E3A5F' },
-  cybersecurity: { icon: <SecurityIcon />, bg: 'rgba(255, 200, 87, 0.18)', color: '#ffc857' },
+  data_analyst: { icon: <QueryStatsIcon />, bg: 'rgba(30, 58, 95, 0.08)', color: '#1E3A5F' },
+  data_engineer: { icon: <StorageIcon />, bg: 'rgba(30, 58, 95, 0.08)', color: '#1E3A5F' },
+  machine_learning_engineer: { icon: <PrecisionManufacturingIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  ai_engineer: { icon: <PrecisionManufacturingIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  mlops_engineer: { icon: <PrecisionManufacturingIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  cybersecurity_analyst: { icon: <SecurityIcon />, bg: 'rgba(255, 200, 87, 0.18)', color: '#ffc857' },
+  security_analyst: { icon: <SecurityIcon />, bg: 'rgba(255, 200, 87, 0.18)', color: '#ffc857' },
   cloud_engineer: { icon: <CloudQueueIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
-  ml_engineer: { icon: <PrecisionManufacturingIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  devops_engineer: { icon: <CloudQueueIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  platform_engineer: { icon: <CloudQueueIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
+  systems_engineer: { icon: <StorageIcon />, bg: 'rgba(25, 100, 126, 0.08)', color: '#19647E' },
+  network_engineer: { icon: <CloudQueueIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' },
 };
 
 const defaultIcon = { icon: <CodeIcon />, bg: 'rgba(17, 157, 164, 0.08)', color: '#119DA4' };
 
-interface ApiJob {
-  _id: string;
-  job_title: string;
-  company: string;
-  location: string;
-  role_category: string;
-  skills: string[];
-}
+const categoryMap: Record<string, 'tech' | 'management' | 'data'> = {
+  frontend_developer: 'tech',
+  backend_developer: 'tech',
+  full_stack_developer: 'tech',
+  software_engineer: 'tech',
+  web_developer: 'tech',
+  devops_engineer: 'tech',
+  platform_engineer: 'tech',
+  systems_engineer: 'tech',
+  network_engineer: 'tech',
+  cloud_engineer: 'tech',
+  cybersecurity_analyst: 'management',
+  security_analyst: 'management',
+  data_scientist: 'data',
+  data_analyst: 'data',
+  data_engineer: 'data',
+  machine_learning_engineer: 'data',
+  ai_engineer: 'data',
+  mlops_engineer: 'data',
+  other: 'tech',
+};
 
 const JobRoles = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [apiJobs, setApiJobs] = useState<ApiJob[]>([]);
+  const [apiJobs, setApiJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/jobs?limit=100')
-      .then(r => r.json())
-      .then(json => {
-        if (json.success && json.data?.jobs) {
-          setApiJobs(json.data.jobs);
-        }
+    setLoading(true);
+    getJobs(1, 1000)
+      .then((res) => {
+        setApiJobs(res.jobs);
       })
       .catch(() => setApiJobs([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const roles: JobRole[] = apiJobs.map(job => {
-    const cat = categoryIcons[job.role_category] || defaultIcon;
-    return {
-      title: job.job_title,
-      description: `${job.company} - ${job.location || 'Remote'}`,
-      label: job.skills.length > 3 ? 'High Demand' : 'Available',
-      icon: cat.icon,
-      iconBg: cat.bg,
-      iconColor: cat.color,
-      labelBg: '#DCFCE7',
-      labelColor: '#15803D',
-      category: 'tech' as const,
-    };
-  });
-
-  const filteredRoles = roles.filter((role) => {
-    const matchesSearch =
-      role.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      role.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = roleFilter === 'all' || role.category === roleFilter;
-    return matchesSearch && matchesFilter;
-  });
-
-  const handleFilterChange = (event: SelectChangeEvent) => {
-    setRoleFilter(event.target.value);
-  };
+  const roles: JobRole[] = apiJobs
+    .filter((job) => {
+      if (roleFilter !== 'all') {
+        const mappedCategory = categoryMap[job.role_category];
+        if (mappedCategory !== roleFilter) return false;
+      }
+      if (!searchTerm.trim()) return true;
+      const term = searchTerm.toLowerCase();
+      return (
+        job.job_title.toLowerCase().includes(term) ||
+        job.company.toLowerCase().includes(term) ||
+        job.skills.some((s) => s.toLowerCase().includes(term))
+      );
+    })
+    .map((job) => {
+      const cat = categoryIcons[job.role_category] || defaultIcon;
+      return {
+        id: job._id,
+        title: job.job_title,
+        description: `${job.company} - ${job.location || 'Remote'}`,
+        label: job.skills.length > 3 ? 'High Demand' : 'Available',
+        icon: cat.icon,
+        iconBg: cat.bg,
+        iconColor: cat.color,
+        labelBg: '#DCFCE7',
+        labelColor: '#15803D',
+        category: categoryMap[job.role_category] || 'tech',
+        skills: job.skills,
+      };
+    })
+    .sort((a, b) => {
+      if (!searchTerm.trim()) return 0;
+      const term = searchTerm.toLowerCase();
+      const aExactTitle = a.title.toLowerCase() === term ? 0 : a.title.toLowerCase().startsWith(term) ? 1 : a.title.toLowerCase().includes(term) ? 2 : 4;
+      const bExactTitle = b.title.toLowerCase() === term ? 0 : b.title.toLowerCase().startsWith(term) ? 1 : b.title.toLowerCase().includes(term) ? 2 : 4;
+      if (aExactTitle !== bExactTitle) return aExactTitle - bExactTitle;
+      const aSkill = a.skills.some((s) => s.toLowerCase().includes(term)) ? 3 : 4;
+      const bSkill = b.skills.some((s) => s.toLowerCase().includes(term)) ? 3 : 4;
+      return aSkill - bSkill;
+    });
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F8FAFC',
@@ -197,7 +237,7 @@ const JobRoles = () => {
 
             <Select
               value={roleFilter}
-              onChange={handleFilterChange}
+              onChange={(event) => setRoleFilter(event.target.value as string)}
               size="medium"
               sx={{
                 minWidth: 160,
@@ -224,7 +264,7 @@ const JobRoles = () => {
             </Select>
 
             <Typography variant="body2" sx={{ color: '#94A3B8', fontWeight: 600, alignSelf: 'center' }}>
-              {filteredRoles.length} roles
+              {loading ? 'Searching...' : `${roles.length} roles`}
             </Typography>
           </Box>
         </Paper>
@@ -241,7 +281,7 @@ const JobRoles = () => {
             gap: 2.5,
           }}
         >
-          {filteredRoles.map((role) => (
+          {roles.map((role) => (
             <Card
               key={role.title}
               elevation={0}
@@ -298,6 +338,7 @@ const JobRoles = () => {
                   navigate("/alignment-results",{
                     state:{
                       roleTitle: role.title,
+                      jobId: role.id,
                       from: "job-roles",
                     },
                     
@@ -324,7 +365,7 @@ const JobRoles = () => {
           ))}
         </Box>
 
-        {filteredRoles.length === 0 && (
+        {roles.length === 0 && (
           <Paper
             elevation={0}
             sx={{

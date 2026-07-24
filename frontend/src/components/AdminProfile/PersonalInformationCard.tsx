@@ -3,32 +3,57 @@ import { Box, Button, Grid, TextField, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import CardContainer from '../Common/CardContainer';
 import CustomSnackbar from '../Common/CustomSnackbar';
-import { useNavigate } from 'react-router-dom';
-import { getMe } from '../../services/authService';
+import request from '../../services/api';
 
-const PersonalInformationCard = () => {
+interface UserProfile {
+  name?: string;
+  email?: string;
+  university?: string;
+  degree?: string;
+  graduationYear?: number;
+}
+
+interface PersonalInformationCardProps {
+  user: UserProfile | null;
+  onSaved: () => void;
+}
+
+const PersonalInformationCard = ({ user, onSaved }: PersonalInformationCardProps) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const navigate = useNavigate();
+  const [snackbarMsg, setSnackbarMsg] = useState('');
+  const [saving, setSaving] = useState(false);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [university, setUniversity] = useState('');
   const [degree, setDegree] = useState('');
+  const [graduationYear, setGraduationYear] = useState('');
 
   useEffect(() => {
-    getMe().then((user) => {
-      setFullName(user?.name || '');
-      setEmail(user?.email || '');
-      setUniversity((user as any)?.university || '');
-      setDegree((user as any)?.degree || '');
-    }).catch(() => {});
-  }, []);
+    if (user) {
+      setFullName(user.name || '');
+      setEmail(user.email || '');
+      setUniversity(user.university || '');
+      setDegree(user.degree || '');
+      setGraduationYear(user.graduationYear ? String(user.graduationYear) : '');
+    }
+  }, [user]);
 
   const handleSnackbarClose = () => setSnackbarOpen(false);
 
-  const handleSave = () => {
-    console.log({ fullName, email, university, degree });
-    setSnackbarOpen(true);
-    setTimeout(() => navigate('/admin/settings'), 2000);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const body: Record<string, any> = { name: fullName, email, university, degree };
+      if (graduationYear) body.graduationYear = Number(graduationYear);
+      await request('/auth/me', { method: 'PUT', body: JSON.stringify(body) });
+      setSnackbarMsg('Profile updated successfully!');
+      setSnackbarOpen(true);
+      onSaved();
+    } catch (err: any) {
+      setSnackbarMsg(err.message || 'Failed to update profile');
+      setSnackbarOpen(true);
+    }
+    setSaving(false);
   };
 
   return (
@@ -47,14 +72,17 @@ const PersonalInformationCard = () => {
         <Grid size={{ xs: 12, md: 6 }}>
           <TextField label="Degree" fullWidth value={degree} onChange={(e) => setDegree(e.target.value)} />
         </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField label="Graduation Year" fullWidth type="number" value={graduationYear} onChange={(e) => setGraduationYear(e.target.value)} />
+        </Grid>
       </Grid>
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
-        <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} sx={{ bgcolor: "#119DA4", textTransform: "none", fontWeight: 600, px: 3, "&:hover": { bgcolor: "#0F766E" } }}>
-          Save Changes
+        <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} disabled={saving} sx={{ bgcolor: "#119DA4", textTransform: "none", fontWeight: 600, px: 3, "&:hover": { bgcolor: "#0F766E" } }}>
+          {saving ? 'Saving...' : 'Save Changes'}
         </Button>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <CustomSnackbar open={snackbarOpen} message="Profile Updated successfully!" severity="success" onClose={handleSnackbarClose} />
+        <CustomSnackbar open={snackbarOpen} message={snackbarMsg} severity={snackbarMsg.includes('Failed') ? 'error' : 'success'} onClose={handleSnackbarClose} />
       </Box>
     </CardContainer>
   );

@@ -8,6 +8,8 @@
     "dev": "nodemon server.js",
     "import:jobs": "node scripts/importJobs.js",
     "create:admin": "node scripts/createAdmin.js",
+    "seed:users": "node scripts/seedUsers.js",
+    "seed:users:fresh": "node scripts/seedUsers.js --fresh",
     "test": "jest --forceExit --detectOpenHandles",
     "test:unit": "jest tests/unit --forceExit",
     "test:integration": "jest tests/integration --forceExit --detectOpenHandles",

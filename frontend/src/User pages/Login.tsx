@@ -20,6 +20,7 @@ import{ToggleButton,
 import { Visibility, VisibilityOff, AutoGraph } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 
 const dashboardColors = {
   primary: '#119DA4',
@@ -28,7 +29,8 @@ const dashboardColors = {
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const { login: authLogin } = useAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -40,7 +42,7 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
+    if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -48,23 +50,27 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const data = await loginApi(username, password);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('role', data.user.role);
+      const data = await loginApi(email, password);
+
+      if (data.user.role === 'admin' && role !== 'admin') {
+        setError('This account is an admin account. Please select Admin to login.');
+        setLoading(false);
+        return;
+      }
+
+      authLogin(data.token, { ...data.user, role: data.user.role as 'student' | 'admin' });
 
       if (rememberMe) {
         localStorage.setItem('rememberedUser', data.user.name);
       }
 
       if (data.user.role === 'student') {
-        const profileCompleted = localStorage.getItem('profileCompleted');
-        navigate(profileCompleted === 'true' ? '/dashboard' : '/cv-scanner');
+        navigate('/dashboard');
       } else {
         navigate('/admin-dashboard');
       }
     } catch {
-      setError('Invalid username or password');
+      setError('Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -222,9 +228,9 @@ const Login = () => {
               <form onSubmit={handleSubmit}>
                 <TextField
                   fullWidth
-                  label="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  label="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   sx={{
                     mb: 3,
                     '& .MuiOutlinedInput-root': {

@@ -13,8 +13,8 @@ const SuggestedSkillsCard = () => {
     const fetchSuggestions = async () => {
       try {
         const topSkills = await getTopSkills(15);
-        const userSkills = await getSkills().catch(() => []);
-        const userSkillSet = new Set((Array.isArray(userSkills) ? userSkills : []).map((s: string) => s.toLowerCase()));
+        const userSkills = await getSkills().catch(() => ({ skills: [] as string[] }));
+        const userSkillSet = new Set((Array.isArray(userSkills.skills) ? userSkills.skills : []).map((s: string) => s.toLowerCase()));
         const suggested = topSkills
           .filter(s => !userSkillSet.has(s.skill.toLowerCase()))
           .slice(0, 7)

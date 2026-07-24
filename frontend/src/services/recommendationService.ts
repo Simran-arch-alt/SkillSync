@@ -50,9 +50,11 @@ export async function getAdvancedRecommendations(
 }
 
 export async function getBasicRecommendations(
-  skills: string[]
+  skills: string[],
+  limit?: number
 ): Promise<BasicRecommendation> {
-  return request<BasicRecommendation>('/recommendations', {
+  const params = limit ? `?limit=${limit}` : '';
+  return request<BasicRecommendation>(`/recommendations${params}`, {
     method: 'POST',
     body: JSON.stringify({ skills }),
   });

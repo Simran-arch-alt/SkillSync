@@ -39,7 +39,7 @@ interface SkillTableProps {
 
   // Update Skill Weight
   onWeightChange: (
-    id: number,
+    id: string,
     newWeight: number
   ) => void;
 

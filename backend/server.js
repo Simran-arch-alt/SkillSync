@@ -13,6 +13,8 @@ const jobRoutes = require('./routes/jobRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 const app = express();
 
@@ -45,6 +47,8 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin/settings', settingsRoutes);
 
 // ----- 404 and Error Handling -----
 app.use(notFoundHandler);
