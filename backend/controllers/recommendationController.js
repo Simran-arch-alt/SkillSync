@@ -82,14 +82,12 @@ const getAdvancedRecommendations = asyncHandler(async (req, res) => {
 
   const skillMatcherScript = path.join(__dirname, '..', '..', 'python-engine', 'skill_matcher.py');
   const ruleRecommenderScript = path.join(__dirname, '..', '..', 'python-engine', 'rule_recommender.py');
-  const csvPath = path.join(__dirname, '..', 'dataset', 'jobs.csv');
   const skillsArg = skills.join(', ');
 
   let topMatches = null;
   let ruleResult = null;
   const errors = [];
 
-  // Run both Python scripts in parallel
   const runPython = (script, args) => new Promise((resolve) => {
     const child = spawn('python', [script, ...args]);
     let stdout = '';
@@ -105,7 +103,7 @@ const getAdvancedRecommendations = asyncHandler(async (req, res) => {
 
   const [matches, rules] = await Promise.all([
     runPython(skillMatcherScript, ['--skills', skillsArg, '--mongo-uri', mongoUri]),
-    runPython(ruleRecommenderScript, ['--skills', skillsArg, '--csv', csvPath]),
+    runPython(ruleRecommenderScript, ['--skills', skillsArg, '--mongo-uri', mongoUri]),
   ]);
 
   if (matches.error) errors.push(matches.error);

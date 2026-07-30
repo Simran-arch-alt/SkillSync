@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 import pandas as pd
 import numpy as np
 import networkx as nx
+from pymongo import MongoClient
 
 
 def normalize_text(text: Any) -> str:
@@ -24,6 +25,23 @@ def parse_skill_list(raw: Any) -> List[str]:
         return []
     parts = [normalize_text(p) for p in str(raw).split(",")]
     return sorted({p for p in parts if p})
+
+
+def load_jobs_from_mongo(mongo_uri: str) -> pd.DataFrame:
+    client = MongoClient(mongo_uri)
+    db = client['skill_gap_db']
+    rows = list(db['jobs'].find({}, {
+        '_id': 0, 'job_title': 1, 'company': 1, 'role_category': 1, 'skills': 1
+    }))
+    records = []
+    for r in rows:
+        skills_str = ', '.join(r.get('skills', []))
+        records.append({
+            'job_title': r.get('job_title', ''),
+            'role_category': r.get('role_category', 'general'),
+            'skills_str': skills_str,
+        })
+    return pd.DataFrame(records)
 
 
 SAMPLE_DATA = [
@@ -52,8 +70,10 @@ SAMPLE_DATA = [
 ]
 
 
-def load_job_dataset(csv_path: str) -> pd.DataFrame:
-    if os.path.exists(csv_path):
+def load_job_dataset(csv_path: str = "", mongo_uri: str = "") -> pd.DataFrame:
+    if mongo_uri:
+        df = load_jobs_from_mongo(mongo_uri)
+    elif csv_path and os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
     else:
         df = pd.DataFrame(SAMPLE_DATA)
@@ -249,6 +269,7 @@ def main():
 
     skills_input = ""
     csv_path = ""
+    mongo_uri = ""
 
     args = sys.argv[1:]
     i = 0
@@ -259,6 +280,9 @@ def main():
         elif args[i] == "--csv" and i + 1 < len(args):
             csv_path = args[i + 1]
             i += 2
+        elif args[i] == "--mongo-uri" and i + 1 < len(args):
+            mongo_uri = args[i + 1]
+            i += 2
         else:
             i += 1
 
@@ -268,7 +292,7 @@ def main():
 
     user_skills = [s.strip() for s in skills_input.split(",") if s.strip()]
 
-    jobs_df = load_job_dataset(csv_path)
+    jobs_df = load_job_dataset(csv_path, mongo_uri)
 
     rule_engine = RuleEngine(jobs_df)
     rule_output = rule_engine.evaluate(user_skills)

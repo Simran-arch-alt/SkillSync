@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 MONGO_URI = 'mongodb://localhost:27017/'
-DB_NAME = 'capstone_db'
+DB_NAME = 'skill_gap_db'
 COLLECTION = 'jobs'
 
 SKILL_PATTERNS = {
@@ -87,17 +87,16 @@ def load_jobs(mongo_uri):
     client = MongoClient(mongo_uri)
     db = client[DB_NAME]
     return list(db[COLLECTION].find({}, {
-        '_id': 0, 'job_title': 1, 'company': 1, 'skills_str': 1
+        '_id': 0, 'job_title': 1, 'company': 1, 'skills': 1
     }))
 
 
 def build_matcher(rows):
     job_texts = []
     for r in rows:
-        skills = r['skills_str'].strip().lower()
-        if skills:
-            skills = skills.replace(', ', '|').replace(',', '|')
-            job_texts.append(skills)
+        skills_list = [s.strip().lower().replace(' ', '_') for s in r.get('skills', []) if s.strip()]
+        if skills_list:
+            job_texts.append('|'.join(skills_list))
     vectorizer = CountVectorizer(binary=True, token_pattern=r'[^|]+')
     X = vectorizer.fit_transform(job_texts)
     return vectorizer, X
@@ -127,7 +126,7 @@ def match(resume_text, vectorizer, X, rows):
                 'title': rows[idx]['job_title'],
                 'company': rows[idx]['company'],
                 'score': round(float(sims[idx]), 4),
-                'requiredSkills': rows[idx]['skills_str'],
+                'requiredSkills': ', '.join(rows[idx].get('skills', [])),
             })
     return results, skills
 
@@ -215,7 +214,7 @@ if __name__ == '__main__':
                     'title': rows[idx]['job_title'],
                     'company': rows[idx]['company'],
                     'score': round(float(sims[idx]), 4),
-                    'requiredSkills': rows[idx]['skills_str'],
+                    'requiredSkills': ', '.join(rows[idx].get('skills', [])),
                 })
     else:
         results, skills = match(resume_text, vectorizer, X, rows)
