@@ -1,0 +1,16 @@
+services:
+  curriculum_api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - FLASK_DEBUG=${FLASK_DEBUG:-0}
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY:-}
+      - GOOGLE_BOOKS_API_KEY=${GOOGLE_BOOKS_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./jobs_dataset_skills_final.csv:/app/jobs_dataset_skills_final.csv:ro
+      - ./skill_curriculum.json:/app/skill_curriculum.json:ro
+    restart: unless-stopped
