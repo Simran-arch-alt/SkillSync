@@ -409,21 +409,40 @@ const LearningRoadmap: React.FC = () => {
                   <Collapse in={isExpanded} timeout={300}>
                     <Divider />
                     <Box sx={{ p: 3 }} onClick={(e) => e.stopPropagation()}>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                         {step.skills.map((ps) => (
-                          <Chip
+                          <Paper
                             key={ps.name}
-                            label={capSkill(ps.name)}
-                            onClick={() => navigate(`/skill/${encodeURIComponent(ps.name.toLowerCase())}`)}
                             sx={{
-                              bgcolor: isMastered ? '#DCFCE7' : '#FEF3C7',
-                              color: isMastered ? '#166534' : '#92400E',
-                              fontWeight: 600,
-                              cursor: 'pointer',
+                              p: 1.5,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              bgcolor: isMastered ? '#DCFCE7' : '#FFFBEB',
                               border: `1px solid ${isMastered ? '#86EFAC' : '#FCD34D'}`,
-                              '&:hover': { bgcolor: isMastered ? '#BBF7D0' : '#FDE68A', boxShadow: 2 },
+                              borderRadius: 2,
+                              boxShadow: 'none',
                             }}
-                          />
+                          >
+                            <Typography sx={{ fontWeight: 600, color: isMastered ? '#166534' : '#92400E' }}>
+                              {capSkill(ps.name)}
+                            </Typography>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              startIcon={<SchoolIcon />}
+                              onClick={() => navigate(`/skill/${encodeURIComponent(ps.name.toLowerCase())}`)}
+                              sx={{
+                                borderColor: '#119DA4',
+                                color: '#119DA4',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                '&:hover': { borderColor: '#19647E', bgcolor: 'rgba(17,157,164,0.08)' },
+                              }}
+                            >
+                              See Learning Materials
+                            </Button>
+                          </Paper>
                         ))}
                       </Box>
 

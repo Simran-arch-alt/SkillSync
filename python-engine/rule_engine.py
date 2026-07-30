@@ -46,9 +46,9 @@ class RuleEngine:
                     preferred_skills=sorted(preferred),
                     postings_analyzed=n_postings,
                     recommendation_text=(
-                        f"Derived from {n_postings} '{title}' postings \u2014 "
-                        f"required: {', '.join(sorted(required)) or 'none identified'}; "
-                        f"preferred: {', '.join(sorted(preferred)) or 'none identified'}."
+                        f"Market analysis of {n_postings} '{title}' job postings reveals that "
+                        f"employers consistently require: {', '.join(sorted(required)) or 'none identified'}. "
+                        f"Candidates with {', '.join(sorted(preferred)) or 'complementary skills'} are viewed more favorably."
                     ),
                 )
             )
