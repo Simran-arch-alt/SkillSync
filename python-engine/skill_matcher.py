@@ -1,0 +1,138 @@
+import sys
+import json
+import re
+import numpy as np
+from pymongo import MongoClient
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+MONGO_URI = 'mongodb://localhost:27017/'
+DB_NAME = 'skill_gap_db'
+COLLECTION = 'jobs'
+
+SKILL_PATTERNS = {
+    'python': r'\bpython\b',
+    'java': r'\bjava\b',
+    'javascript': r'\bjavascript\b',
+    'c++': r'\bc\+\+\b',
+    'c#': r'\bc\#\b',
+    'typescript': r'\btypescript\b',
+    'go': r'\bgo\b',
+    'rust': r'\brust\b',
+    'sql': r'\bsql\b',
+    'html': r'\bhtml\b',
+    'css': r'\bcss\b',
+    'react': r'\breact\b',
+    'angular': r'\bangular\b',
+    'node.js': r'\bnode\.?(js)?\b',
+    'django': r'\bdjango\b',
+    'flask': r'\bflask\b',
+    'spring': r'\bspring\b',
+    'aws': r'\baws\b',
+    'azure': r'\bazure\b',
+    'docker': r'\bdocker\b',
+    'kubernetes': r'\bkubernetes\b',
+    'git': r'\bgit\b',
+    'linux': r'\blinux\b',
+    'excel': r'\bexcel\b',
+    'tableau': r'\btableau\b',
+    'pandas': r'\bpandas\b',
+    'machine learning': r'\bmachine learning\b',
+    'deep learning': r'\bdeep learning\b',
+    'tensorflow': r'\btensorflow\b',
+    'rest api': r'\brest api\b',
+    'power bi': r'\bpower bi\b',
+}
+
+
+def load_jobs(mongo_uri):
+    client = MongoClient(mongo_uri)
+    db = client[DB_NAME]
+    return list(db[COLLECTION].find({}, {
+        '_id': 0, 'job_title': 1, 'company': 1, 'skills': 1
+    }))
+
+
+def build_matcher(rows):
+    job_texts = []
+    for r in rows:
+        if r.get('skills'):
+            skills = '|'.join(s.lower().replace(' ', '_') for s in r['skills'] if s.strip())
+            job_texts.append(skills)
+
+    vectorizer = CountVectorizer(binary=True, token_pattern=r'[^|]+')
+    X = vectorizer.fit_transform(job_texts)
+    return vectorizer, X
+
+
+def extract_skills(text):
+    text_lower = text.lower()
+    found = []
+    for skill_name, pattern in SKILL_PATTERNS.items():
+        if re.search(pattern, text_lower):
+            found.append(skill_name)
+    return found
+
+
+def match(resume_text, vectorizer, X, rows):
+    skills = extract_skills(resume_text)
+    if not skills:
+        return [], skills
+
+    processed = '|'.join(s.lower().replace(' ', '_') for s in skills)
+    vec = vectorizer.transform([processed])
+    sims = cosine_similarity(vec, X).flatten()
+    top_idx = np.argsort(sims)[::-1][:10]
+
+    results = []
+    for idx in top_idx:
+        if sims[idx] > 0:
+            results.append({
+                'title': rows[idx]['job_title'],
+                'company': rows[idx]['company'],
+                'score': round(float(sims[idx]), 4),
+                'requiredSkills': ', '.join(rows[idx].get('skills', [])),
+            })
+    return results, skills
+
+
+if __name__ == '__main__':
+    resume_text = ''
+    skills_list = []
+    mongo_uri = 'mongodb://localhost:27017/'
+
+    args = sys.argv[1:]
+    i = 0
+    while i < len(args):
+        if args[i] == '--text' and i + 1 < len(args):
+            resume_text = args[i + 1]
+            i += 2
+        elif args[i] == '--skills' and i + 1 < len(args):
+            skills_list = [s.strip() for s in args[i + 1].split(',') if s.strip()]
+            i += 2
+        elif args[i] == '--mongo-uri' and i + 1 < len(args):
+            mongo_uri = args[i + 1]
+            i += 2
+        else:
+            i += 1
+
+    rows = load_jobs(mongo_uri)
+    vectorizer, X = build_matcher(rows)
+
+    if skills_list:
+        skills_text = ', '.join(skills_list)
+        results, skills = match(skills_text, vectorizer, X, rows)
+        output = {
+            'inputSkills': skills_list,
+            'results': results,
+        }
+    else:
+        if not resume_text:
+            resume_text = sys.stdin.read()
+        results, skills = match(resume_text, vectorizer, X, rows)
+        output = {
+            'extractedSkills': ', '.join(skills),
+            'results': results,
+        }
+
+    print(json.dumps(output))

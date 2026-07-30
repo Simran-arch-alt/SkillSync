@@ -1,0 +1,9 @@
+module.exports = {
+  JWT_SECRET: process.env.JWT_SECRET,
+  JWT_EXPIRE: process.env.JWT_EXPIRE || '7d',
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 10,
+  MAX_LIMIT: 100,
+  TOP_RECOMMENDATIONS_COUNT: 10,
+  BCRYPT_SALT_ROUNDS: 10,
+};
