@@ -131,4 +131,55 @@ const searchJobs = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getJobs, getJobById, searchJobs };
+/**
+ * @desc    Get aggregated role summaries with descriptions
+ * @route   GET /api/jobs/roles/summary
+ * @access  Public
+ */
+const getRolesSummary = asyncHandler(async (req, res) => {
+  const roles = await Job.aggregate([
+    {
+      $group: {
+        _id: '$job_title',
+        count: { $sum: 1 },
+        category: { $first: '$role_category' },
+        companies: { $addToSet: '$company' },
+        seniority: { $addToSet: '$seniority_level' },
+        skills: { $push: '$skills' },
+      },
+    },
+    { $sort: { count: -1 } },
+  ]);
+
+  const summary = roles
+    .filter((r) => r._id)
+    .map((r) => {
+      const allSkills = [...new Set(r.skills.flat().filter(Boolean))];
+      const topSkills = allSkills.slice(0, 10);
+      const seniorityList = r.seniority.filter((s) => s && s !== 'not specified');
+
+      const parts = [`${r.count} job listing${r.count > 1 ? 's' : ''}`];
+      if (r.category && r.category !== 'uncategorized') {
+        parts.push(`in ${r.category}`);
+      }
+      if (seniorityList.length > 0) {
+        parts.push(`(${seniorityList.join(', ')})`);
+      }
+      const description = parts.join(' ');
+
+      return {
+        title: r._id,
+        category: r.category || '',
+        count: r.count,
+        companies: r.companies.slice(0, 5),
+        skills: topSkills,
+        allSkills,
+        seniority: seniorityList,
+        description,
+      };
+    });
+
+  return sendSuccess(res, 200, 'Role summaries retrieved successfully.', { roles: summary });
+});
+
+module.exports = { getJobs, getJobById, searchJobs, getRolesSummary };

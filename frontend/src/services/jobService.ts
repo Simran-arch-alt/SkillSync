@@ -36,6 +36,21 @@ export async function searchJobs(filters: JobSearchFilters, page = 1, limit = 20
   return request<{ jobs: Job[]; pagination: any }>(`/jobs/search?${params}`);
 }
 
+export interface RoleSummary {
+  title: string;
+  category: string;
+  count: number;
+  companies: string[];
+  skills: string[];
+  allSkills: string[];
+  seniority: string[];
+  description: string;
+}
+
+export async function getRolesSummary(): Promise<{ roles: RoleSummary[] }> {
+  return request<{ roles: RoleSummary[] }>('/jobs/roles/summary');
+}
+
 export async function getJobById(id: string): Promise<{ job: Job }> {
   return request<{ job: Job }>(`/jobs/${id}`);
 }

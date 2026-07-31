@@ -1,5 +1,3 @@
-const { spawn } = require('child_process');
-const path = require('path');
 const Job = require('../models/Job');
 const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
@@ -71,53 +69,87 @@ const getSkillGapForJob = asyncHandler(async (req, res) => {
 });
 
 /**
- * @desc    Get advanced recommendations using cosine similarity + rules + DAG
+ * @desc    Get advanced recommendations using Python engine (Flask API)
  * @route   POST /api/recommendations/advanced
  * @access  Public
  * @body    { "skills": ["Python", "SQL", "Docker"] }
  */
 const getAdvancedRecommendations = asyncHandler(async (req, res) => {
   const { skills } = req.body;
-  const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/skill_gap_db';
-
-  const skillMatcherScript = path.join(__dirname, '..', '..', 'python-engine', 'skill_matcher.py');
-  const ruleRecommenderScript = path.join(__dirname, '..', '..', 'python-engine', 'rule_recommender.py');
-  const skillsArg = skills.join(', ');
-
-  let topMatches = null;
-  let ruleResult = null;
+  const pyengineUrl = process.env.PYENGINE_URL || 'http://localhost:5001';
   const errors = [];
 
-  const runPython = (script, args) => new Promise((resolve) => {
-    const child = spawn('python', [script, ...args]);
-    let stdout = '';
-    let stderr = '';
-    child.stdout.on('data', (d) => { stdout += d.toString(); });
-    child.stderr.on('data', (d) => { stderr += d.toString(); });
-    child.on('close', (code) => {
-      if (code !== 0) return resolve({ error: stderr || 'Process failed' });
-      try { resolve(JSON.parse(stdout)); }
-      catch { resolve({ error: 'Invalid JSON output', raw: stdout }); }
+  let ruleResult = null;
+  try {
+    const response = await fetch(`${pyengineUrl}/recommend`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skills }),
     });
-  });
+    if (!response.ok) {
+      const text = await response.text();
+      errors.push(`Python engine error: ${text}`);
+    } else {
+      ruleResult = await response.json();
+    }
+  } catch (err) {
+    errors.push(`Failed to reach python-engine: ${err.message}`);
+  }
 
-  const [matches, rules] = await Promise.all([
-    runPython(skillMatcherScript, ['--skills', skillsArg, '--mongo-uri', mongoUri]),
-    runPython(ruleRecommenderScript, ['--skills', skillsArg, '--mongo-uri', mongoUri]),
-  ]);
-
-  if (matches.error) errors.push(matches.error);
-  else topMatches = matches;
-
-  if (rules.error) errors.push(rules.error);
-  else ruleResult = rules;
+  let topMatches = null;
+  try {
+    const response = await fetch(`${pyengineUrl}/skill-match`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skills }),
+    });
+    if (response.ok) {
+      topMatches = await response.json();
+    }
+  } catch (err) {
+    // skill-match failure is non-critical
+  }
 
   return sendSuccess(res, 200, 'Advanced recommendations generated successfully.', {
     topMatches: topMatches ? topMatches.results : [],
-    ruleRecommendations: ruleResult ? ruleResult.ruleRecommendations : [],
-    learningPath: ruleResult ? ruleResult.learningPath : [],
+    ruleRecommendations: ruleResult ? ruleResult.rule_recommendations.rules : [],
+    learningPath: ruleResult ? ruleResult.learning_path : [],
+    learningPathDetails: ruleResult ? ruleResult.learning_path_details : [],
+    summary: ruleResult ? ruleResult.summary : null,
     errors: errors.length > 0 ? errors : null,
   });
 });
 
-module.exports = { getRecommendations, getMyRecommendations, getSkillGapForJob, getAdvancedRecommendations };
+/**
+ * @desc    Get curriculum details for a skill from Python engine
+ * @route   GET /api/recommendations/curriculum/:skill
+ * @access  Public
+ */
+const getCurriculumForSkill = asyncHandler(async (req, res) => {
+  const { skill } = req.params;
+  const pyengineUrl = process.env.PYENGINE_URL || 'http://localhost:5001';
+  const response = await fetch(`${pyengineUrl}/curriculum/${encodeURIComponent(skill)}`);
+  if (!response.ok) {
+    throw new AppError(`Curriculum not found for skill: ${skill}`, 404);
+  }
+  const data = await response.json();
+  return sendSuccess(res, 200, 'Curriculum retrieved successfully.', data);
+});
+
+/**
+ * @desc    Get enriched resources (curriculum, YouTube, books) for a skill
+ * @route   GET /api/recommendations/resources/:skill
+ * @access  Public
+ */
+const getSkillResources = asyncHandler(async (req, res) => {
+  const { skill } = req.params;
+  const pyengineUrl = process.env.PYENGINE_URL || 'http://localhost:5001';
+  const response = await fetch(`${pyengineUrl}/resources/${encodeURIComponent(skill)}`);
+  if (!response.ok) {
+    throw new AppError(`Resources not found for skill: ${skill}`, 404);
+  }
+  const data = await response.json();
+  return sendSuccess(res, 200, 'Resources retrieved successfully.', data);
+});
+
+module.exports = { getRecommendations, getMyRecommendations, getSkillGapForJob, getAdvancedRecommendations, getCurriculumForSkill, getSkillResources };

@@ -53,7 +53,6 @@ const transformRow = (row) => ({
   role_category: (row.role_category || '').trim().toLowerCase() || 'uncategorized',
   seniority_level: (row.seniority_level || '').trim().toLowerCase() || 'not specified',
   is_aggregator: parseBoolean(row.is_aggregator),
-  job_description: (row.job_description || '').trim(),
   skills: parseSkills(row.skills_str),
 });
 
