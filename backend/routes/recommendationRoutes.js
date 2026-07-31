@@ -4,6 +4,8 @@ const {
   getMyRecommendations,
   getSkillGapForJob,
   getAdvancedRecommendations,
+  getCurriculumForSkill,
+  getSkillResources,
 } = require('../controllers/recommendationController');
 const { protect } = require('../middleware/auth');
 const { validateSkillsArray, validateObjectId } = require('../middleware/validate');
@@ -21,5 +23,11 @@ router.get('/gap/:jobId', protect, validateObjectId('jobId'), getSkillGapForJob)
 
 // Public: advanced recommendations using Python rule engine + DAG learning path
 router.post('/advanced', validateSkillsArray, getAdvancedRecommendations);
+
+// Public: get curriculum for a skill from Python engine
+router.get('/curriculum/:skill', getCurriculumForSkill);
+
+// Public: get enriched resources (curriculum, YouTube, books) for a skill
+router.get('/resources/:skill', getSkillResources);
 
 module.exports = router;

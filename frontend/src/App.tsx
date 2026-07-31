@@ -22,6 +22,7 @@ import Notifications from './User pages/Notifications';
 import JobRoles from './User pages/JobRoles';
 import AlignmentResults from './User pages/AlignmentResults';
 import LearningRoadmap from './User pages/LearningRoadmap';
+import SkillDetail from './User pages/SkillDetail';
 import PrivacySettings from './User pages/Privacy Settings';
 import UserManagement from './Admin pages/UserMangement';
 import SkillLibrary from './Admin pages/SkillLibrary';
@@ -102,6 +103,11 @@ function App() {
             <Route path="/learning-roadmap" element={
               <ProtectedRoute requiredRole="student">
                 <LearningRoadmap />
+              </ProtectedRoute>
+            } />
+            <Route path="/skill/:skillName" element={
+              <ProtectedRoute requiredRole="student">
+                <SkillDetail />
               </ProtectedRoute>
             } />
             <Route path="/settings" element={

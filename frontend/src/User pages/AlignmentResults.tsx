@@ -1,13 +1,70 @@
-import { Box, Typography, Button, Paper, CircularProgress, Chip } from "@mui/material";
+import { Box, Typography, Button, Paper, CircularProgress, Chip, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SchoolIcon from '@mui/icons-material/School';
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Nav/Sidebar";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Nav from "../components/Nav/Nav";
 import { useState, useEffect } from "react";
 import { getSkills } from "../services/studentService";
-import { searchJobs, getJobById } from "../services/jobService";
+import { searchJobs, getJobById, getRolesSummary } from "../services/jobService";
 import { getAdvancedRecommendations } from "../services/recommendationService";
 import type { RuleRecommendation } from "../services/recommendationService";
+import type { RoleSummary } from "../services/jobService";
+
+const SKILL_DESCRIPTIONS: Record<string, string> = {
+  'python': 'High-level programming language widely used for web development, data analysis, AI, and automation.',
+  'java': 'Object-oriented programming language used for enterprise applications, Android development, and backend systems.',
+  'javascript': 'Core language of the web, used for interactive frontend and backend (Node.js) development.',
+  'typescript': 'Typed superset of JavaScript that compiles to plain JavaScript, adding static type checking.',
+  'c++': 'High-performance language used for system software, game engines, and performance-critical applications.',
+  'c#': 'Microsoft\'s language for .NET ecosystem, used for desktop apps, games (Unity), and web services.',
+  'react': 'Frontend library for building dynamic user interfaces with reusable components and virtual DOM.',
+  'angular': 'TypeScript-based frontend framework by Google for building scalable single-page applications.',
+  'vue': 'Progressive JavaScript framework for building UIs with a focus on simplicity and flexibility.',
+  'node.js': 'JavaScript runtime for building scalable server-side applications and APIs.',
+  'express': 'Minimal Node.js web framework for building RESTful APIs and web applications.',
+  'django': 'High-level Python web framework emphasizing rapid development and clean, pragmatic design.',
+  'flask': 'Lightweight Python web framework with flexibility and minimal boilerplate for small to medium apps.',
+  'spring': 'Java framework for building enterprise-grade applications with dependency injection and MVC.',
+  'aws': 'Amazon\'s cloud platform offering compute, storage, database, and machine learning services.',
+  'azure': 'Microsoft\'s cloud platform with services for computing, analytics, storage, and networking.',
+  'gcp': 'Google\'s cloud platform providing infrastructure, data analytics, and machine learning tools.',
+  'docker': 'Containerization platform that packages applications with dependencies for consistent deployment.',
+  'kubernetes': 'Container orchestration platform for automating deployment, scaling, and management.',
+  'sql': 'Standard language for managing and querying relational databases like MySQL, PostgreSQL, and SQL Server.',
+  'mongodb': 'NoSQL document database with flexible schema design for modern applications.',
+  'postgresql': 'Advanced open-source relational database with strong ACID compliance and extensibility.',
+  'mysql': 'Popular open-source relational database management system used in web applications.',
+  'redis': 'In-memory data structure store used as cache, message broker, and database for fast data access.',
+  'git': 'Distributed version control system for tracking changes in source code during development.',
+  'machine learning': 'Field of AI focused on building systems that learn and improve from data without explicit programming.',
+  'deep learning': 'Subset of machine learning using neural networks with many layers for complex pattern recognition.',
+  'tensorflow': 'Google\'s open-source ML framework for building and deploying neural networks at scale.',
+  'pytorch': 'Facebook\'s open-source ML framework with dynamic computation graphs, popular in research.',
+  'pandas': 'Python library for data manipulation and analysis with DataFrame structures.',
+  'numpy': 'Python library for numerical computing with multi-dimensional arrays and mathematical functions.',
+  'tableau': 'Data visualization tool for creating interactive dashboards and business intelligence reports.',
+  'power bi': 'Microsoft\'s business analytics tool for interactive visualizations and BI insights.',
+  'etl': 'Extract, Transform, Load processes for moving and transforming data between systems.',
+  'spark': 'Unified analytics engine for large-scale data processing with in-memory computing.',
+  'airflow': 'Platform for programmatically authoring, scheduling, and monitoring workflows.',
+  'terraform': 'Infrastructure-as-code tool for provisioning and managing cloud resources declaratively.',
+  'jenkins': 'Automation server for CI/CD pipelines, building, testing, and deploying code.',
+  'rest api': 'Architectural style for designing networked applications using HTTP requests.',
+  'graphql': 'Query language for APIs that lets clients request exactly the data they need.',
+  'linux': 'Open-source operating system kernel used widely in servers, cloud, and embedded systems.',
+  'kotlin': 'Modern JVM language with concise syntax, fully interoperable with Java, official for Android.',
+  'swift': 'Apple\'s programming language for iOS, macOS, watchOS, and tvOS application development.',
+  'go': 'Statically typed language by Google designed for concurrency, performance, and simplicity.',
+  'rust': 'Systems language focused on safety, speed, and memory management without garbage collection.',
+  'scikit-learn': 'Python library for classical machine learning algorithms including classification and regression.',
+  'nlp': 'Natural Language Processing — AI subfield for understanding, generating, and processing human language.',
+  'computer vision': 'AI field enabling machines to interpret and process visual information from the world.',
+  'microservices': 'Architectural style structuring applications as loosely coupled, independently deployable services.',
+  'ci/cd': 'Continuous Integration and Continuous Delivery practices for automated testing and deployment.',
+  'agile': 'Iterative software development methodology emphasizing flexibility, collaboration, and customer feedback.',
+};
 
 interface AlignmentData {
   score: number;
@@ -22,76 +79,166 @@ const AlignmentResults = () => {
   const [loading, setLoading] = useState(true);
   const [ruleRecs, setRuleRecs] = useState<RuleRecommendation[]>([]);
   const [learningPath, setLearningPath] = useState<string[]>([]);
+  const [learningPathDetails, setLearningPathDetails] = useState<any[]>([]);
+  const [roles, setRoles] = useState<RoleSummary[]>([]);
+  const [roleLoading, setRoleLoading] = useState(false);
 
   const from = location.state?.from;
   const selectedRole = location.state?.roleTitle;
   const selectedJobId = location.state?.jobId;
 
   useEffect(() => {
-    if (!selectedRole) {
-      navigate('/job-roles');
-      return;
+    loadRoles();
+  }, [selectedRole]);
+
+  useEffect(() => {
+    if (selectedRole && roles.length > 0) {
+      runAlignment(selectedRole, selectedJobId);
+    } else if (selectedRole && roles.length === 0) {
+      setLoading(true);
+    } else {
+      setLoading(false);
     }
+  }, [selectedRole, selectedJobId, roles]);
 
-    const fetchAlignment = async () => {
+  const runAlignment = async (role: string, jobId?: string) => {
+    setLoading(true);
+    try {
+      const { skills: skillsArray } = await getSkills();
+      const userSkillsLower = skillsArray.map((s: string) => s.toLowerCase());
+
       try {
-        const { skills: skillsArray } = await getSkills();
-
-        // Get Python-powered advanced recommendations
-        try {
-          const adv = await getAdvancedRecommendations(skillsArray);
-          setRuleRecs(adv.ruleRecommendations || []);
-          setLearningPath(adv.learningPath || []);
-        } catch {
-          // advanced endpoint optional; fall through
-        }
-
-        let matchingJob: any = null;
-
-        if (selectedJobId) {
-          try {
-            const jobRes = await getJobById(selectedJobId);
-            matchingJob = jobRes.job;
-          } catch {
-            // fallback to search
-          }
-        }
-
-        if (!matchingJob && selectedRole) {
-          const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
-          matchingJob = jobRes.jobs?.find((j) => j.job_title === selectedRole);
-        }
-
-        if (matchingJob && matchingJob.skills) {
-          const jobSkills = matchingJob.skills.map((s: string) => s.toLowerCase());
-          const userSkillsLower = skillsArray.map((s) => s.toLowerCase());
-          const matched = jobSkills.filter((s: string) => userSkillsLower.includes(s));
-          const gaps = jobSkills.filter((s: string) => !userSkillsLower.includes(s));
-          const score = jobSkills.length > 0 ? Math.round((matched.length / jobSkills.length) * 100) : 0;
-          setAlignmentData({
-            score,
-            matchedSkills: matched.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
-            gaps: gaps.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
-          });
-          setLoading(false);
-          return;
-        }
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to fetch alignment:', err);
-      } finally {
-        setLoading(false);
+        const adv = await getAdvancedRecommendations(skillsArray);
+        setRuleRecs(adv.ruleRecommendations || []);
+        setLearningPath(adv.learningPath || []);
+        setLearningPathDetails(adv.learningPathDetails || []);
+      } catch {
+        // advanced endpoint optional; fall through
       }
-    };
-    fetchAlignment();
-  }, [selectedRole, selectedJobId]);
+
+      const roleSummary = roles.find((r) => r.title === role);
+      let roleSkills: string[] = [];
+
+      if (roleSummary && roleSummary.allSkills && roleSummary.allSkills.length > 0) {
+        roleSkills = roleSummary.allSkills.map((s: string) => s.toLowerCase());
+      } else if (roleSummary && roleSummary.skills.length > 0) {
+        roleSkills = roleSummary.skills.map((s: string) => s.toLowerCase());
+      }
+
+      if (roleSkills.length === 0 && jobId) {
+        try {
+          const jobRes = await getJobById(jobId);
+          if (jobRes.job?.skills) {
+            roleSkills = jobRes.job.skills.map((s: string) => s.toLowerCase());
+          }
+        } catch {}
+      }
+
+      if (roleSkills.length === 0 && role) {
+        const jobRes = await searchJobs({ keyword: role }, 1, 200);
+        const matchedJob = jobRes.jobs?.find((j: any) => j.job_title === role);
+        if (matchedJob?.skills) {
+          roleSkills = matchedJob.skills.map((s: string) => s.toLowerCase());
+        }
+      }
+
+      if (roleSkills.length > 0) {
+        const matched = roleSkills.filter((s: string) => userSkillsLower.includes(s));
+        const gaps = roleSkills.filter((s: string) => !userSkillsLower.includes(s));
+        const score = roleSkills.length > 0 ? Math.round((matched.length / roleSkills.length) * 100) : 0;
+        setAlignmentData({
+          score,
+          matchedSkills: matched.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
+          gaps: gaps.map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)),
+        });
+        setLoading(false);
+        return;
+      }
+    } catch (err) {
+      console.error('Failed to fetch alignment:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectRole = (role: string) => {
+    navigate(`/alignment-results`, { state: { roleTitle: role, from: "alignment" }, replace: true });
+  };
+
+  const loadRoles = async () => {
+    setRoleLoading(true);
+    try {
+      const res = await getRolesSummary();
+      setRoles(res.roles);
+    } catch (err) {
+      console.error('Failed to load roles:', err);
+    } finally {
+      setRoleLoading(false);
+    }
+  };
 
   const data = alignmentData;
 
   const handleBack = () => {
-    navigate("/job-roles");
+    if (selectedRole) {
+      navigate("/alignment-results", { replace: true });
+    } else {
+      navigate("/job-roles");
+    }
   };
+
+  if (!selectedRole) {
+    return (
+      <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFC" }}>
+        <Sidebar />
+        <Box sx={{ flexGrow: 1 }}>
+          <Nav />
+          <Box sx={{ p: 4 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 4 }}>
+              <Button startIcon={<ArrowBackIcon />} onClick={() => navigate("/job-roles")} sx={{ color: '#119DA4', fontWeight: 'bold', textTransform: 'none' }}>Back</Button>
+              <Typography variant="h4" sx={{ fontWeight: 800, color: '#0F172A' }}>AI Skill Alignment Analysis</Typography>
+            </Box>
+            <Typography sx={{ color: '#64748B', mb: 3, fontSize: '1.1rem' }}>
+              Select a job role to compare your current skills against industry requirements.
+            </Typography>
+            {roleLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}><CircularProgress /></Box>
+            ) : roles.length === 0 ? (
+              <Typography sx={{ color: '#64748B' }}>No roles available.</Typography>
+            ) : (
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
+                {roles.map((role) => (
+                  <Paper
+                    key={role.title}
+                    onClick={() => handleSelectRole(role.title)}
+                    sx={{
+                      p: 3,
+                      borderRadius: 3,
+                      cursor: 'pointer',
+                      border: '1px solid #E2E8F0',
+                      transition: 'all 0.2s',
+                      '&:hover': { borderColor: '#119DA4', boxShadow: 3, transform: 'translateY(-2px)' },
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 600, color: '#0F172A', mb: 0.5 }}>{role.title}</Typography>
+                    <Typography sx={{ color: '#64748B', fontSize: '0.85rem', mb: 1.5 }}>{role.description}</Typography>
+                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                      {role.skills.slice(0, 4).map((s) => (
+                        <Chip key={s} label={s} size="small" sx={{ fontSize: '0.7rem', bgcolor: '#F0F9FF', color: '#0369A1' }} />
+                      ))}
+                      {role.skills.length > 4 && (
+                        <Chip label={`+${role.skills.length - 4}`} size="small" sx={{ fontSize: '0.7rem', bgcolor: '#F1F5F9', color: '#475569' }} />
+                      )}
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            )}
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   if (loading) {
     return (
@@ -132,7 +279,7 @@ const AlignmentResults = () => {
               <Box>
                 <Typography variant="h5" sx={{ color: "#0F172A", fontWeight: "bold" }}>{selectedRole}</Typography>
                 <Typography sx={{ color: "#64748B", mt: 1 }}>
-                  {data?.matchedSkills.length} matched · {data?.gaps.length} gaps identified
+                  {data?.matchedSkills?.length || 0} matched · {data?.gaps?.length || 0} gaps identified
                 </Typography>
               </Box>
               <Box sx={{ position: "relative", display: "inline-flex" }}>
@@ -155,9 +302,9 @@ const AlignmentResults = () => {
             <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 4 }}>
               <Box>
                 <Typography variant="h6" sx={{ color: "#0F172A", fontWeight: "bold", mb: 2 }}>
-                  Matched Skills ({data?.matchedSkills.length})
+                  Matched Skills ({data?.matchedSkills?.length || 0})
                 </Typography>
-                {data?.matchedSkills.map((skill) => (
+                {data?.matchedSkills?.map((skill) => (
                   <Box key={skill} sx={{ p: 1.5, mb: 1.5, borderRadius: 2, bgcolor: "#DCFCE7", border: "1px solid #86EFAC", color: "#166534" }}>
                     {skill}
                   </Box>
@@ -165,13 +312,50 @@ const AlignmentResults = () => {
               </Box>
               <Box>
                 <Typography variant="h6" sx={{ color: "#0F172A", mb: 2, fontWeight: "bold" }}>
-                  Skill Gaps ({data?.gaps.length})
+                  Skill Gaps ({data?.gaps?.length || 0})
                 </Typography>
-                {data?.gaps.map((gap) => (
-                  <Box key={gap} sx={{ p: 1.5, mb: 1.5, borderRadius: 2, bgcolor: "#FEF3C7", border: "1px solid #FCD34D", color: "#B45309" }}>
-                    {gap}
-                  </Box>
-                ))}
+                {data?.gaps?.map((gap) => {
+                  const gapLower = gap.toLowerCase();
+                  const desc = SKILL_DESCRIPTIONS[gapLower] || `${gap} is a valuable skill for this role.`;
+                  return (
+                    <Accordion
+                      key={gap}
+                      disableGutters
+                      sx={{
+                        mb: 1.5,
+                        borderRadius: '8px !important',
+                        bgcolor: "#FFFBEB",
+                        border: "1px solid #FCD34D",
+                        boxShadow: 'none',
+                        '&:before': { display: 'none' },
+                      }}
+                    >
+                      <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#B45309' }} />}>
+                        <Typography sx={{ fontWeight: 600, color: '#B45309' }}>{gap}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails sx={{ pt: 0 }}>
+                        <Typography sx={{ color: '#92400E', fontSize: '0.9rem', mb: 2 }}>
+                          {desc}
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          startIcon={<SchoolIcon />}
+                          onClick={() => navigate(`/skill/${encodeURIComponent(gap.toLowerCase())}`)}
+                          sx={{
+                            borderColor: '#119DA4',
+                            color: '#119DA4',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            '&:hover': { borderColor: '#19647E', bgcolor: 'rgba(17,157,164,0.08)' },
+                          }}
+                        >
+                          See Learning Materials
+                        </Button>
+                      </AccordionDetails>
+                    </Accordion>
+                  );
+                })}
               </Box>
             </Box>
 
@@ -211,7 +395,7 @@ const AlignmentResults = () => {
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }}>
               <Button
                 variant="contained"
-                onClick={() => navigate("/learning-roadmap", { state: { roleTitle: selectedRole, jobId: selectedJobId, from, learningPath } })}
+                onClick={() => navigate("/learning-roadmap", { state: { roleTitle: selectedRole, jobId: selectedJobId, from, learningPath, learningPathDetails } })}
                 sx={{ borderRadius: 3, px: 4, py: 1.5, background: "linear-gradient(135deg,#19647E,#119DA4)", textTransform: "none", fontWeight: "bold" }}
               >
                 Generate Learning Roadmap

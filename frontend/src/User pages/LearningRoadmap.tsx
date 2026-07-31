@@ -9,23 +9,54 @@ import {
   Collapse,
   IconButton,
   Divider,
+  Link,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import SchoolIcon from '@mui/icons-material/School';
+import BuildIcon from '@mui/icons-material/Build';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Nav/Sidebar';
 import Nav from '../components/Nav/Nav';
 import { getSkills } from '../services/studentService';
 import { searchJobs } from '../services/jobService';
+import { getAdvancedRecommendations, getSkillCurriculum } from '../services/recommendationService';
+import type { SkillCurriculumDetail } from '../services/recommendationService';
+
+const ACRONYMS = new Set(['aws', 'azure', 'css', 'html', 'sql', 'api', 'cli', 'json', 'xml', 'rest', 'ai', 'ml', 'ui', 'crud', 'ide', 'i/o', 'nosql']);
+const SPECIAL = new Map([
+  ['javascript', 'JavaScript'],
+  ['typescript', 'TypeScript'],
+  ['node js', 'Node.js'],
+  ['nodejs', 'Node.js'],
+  ['react', 'React'],
+  ['angular', 'Angular'],
+  ['power bi', 'Power BI'],
+  ['c++', 'C++'],
+  ['c#', 'C#'],
+  ['.net', '.NET'],
+]);
+
+const capSkill = (s: string): string => {
+  const lower = s.toLowerCase().trim();
+  if (SPECIAL.has(lower)) return SPECIAL.get(lower)!;
+  if (ACRONYMS.has(lower)) return lower.toUpperCase();
+  return lower.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+};
+
+interface PhaseSkill {
+  name: string;
+  curriculum: SkillCurriculumDetail | null;
+}
 
 interface RoadmapStep {
   phase: string;
   title: string;
   description: string;
-  skills: string[];
   type: 'mastered' | 'learning';
   duration: string;
+  skills: PhaseSkill[];
 }
 
 const LearningRoadmap: React.FC = () => {
@@ -40,101 +71,212 @@ const LearningRoadmap: React.FC = () => {
   const selectedJobId = location.state?.jobId;
   const from = location.state?.from;
   const pythonLearningPath: string[] = location.state?.learningPath || [];
+  const pythonLearningPathDetails: SkillCurriculumDetail[] = location.state?.learningPathDetails || [];
 
   useEffect(() => {
     if (!selectedRole) {
-      navigate('/job-roles');
+      generateGeneralRoadmap();
       return;
     }
+    fetchRoadmap();
+  }, [selectedRole, selectedJobId]);
 
-    const fetchRoadmap = async () => {
+  const enrichSkills = async (skillNames: string[]): Promise<PhaseSkill[]> => {
+    const detailMap = new Map<string, SkillCurriculumDetail>();
+    for (const d of pythonLearningPathDetails) {
+      detailMap.set(d.skill.toLowerCase(), d);
+    }
+    return Promise.all(
+      skillNames.map(async (name) => {
+        const existing = detailMap.get(name.toLowerCase());
+        if (existing) return { name, curriculum: existing };
+        try {
+          const curriculum = await getSkillCurriculum(name);
+          return { name, curriculum };
+        } catch {
+          return { name, curriculum: null };
+        }
+      })
+    );
+  };
+
+  const generateGeneralRoadmap = async () => {
+    try {
+      const { skills: userSkills } = await getSkills();
+      let adv: any = { learningPath: [], ruleRecommendations: [], learningPathDetails: [] };
       try {
-        const { skills: userSkills } = await getSkills();
-        const userSkillSet = new Set(userSkills.map((s) => s.toLowerCase()));
+        adv = await getAdvancedRecommendations(userSkills);
+      } catch {}
 
-        let jobSkills: string[] = [];
-        let jobCompany = '';
+      const dagPath: string[] = adv.learningPath || [];
+      const recommendations = adv.ruleRecommendations || [];
+      const allDetails: SkillCurriculumDetail[] = adv.learningPathDetails || [];
 
-        if (selectedJobId) {
-          const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
-          const matchedJob = jobRes.jobs?.find(
-            (j: any) => j._id === selectedJobId || j.job_title === selectedRole
-          );
-          if (matchedJob) {
-            jobSkills = matchedJob.skills || [];
-            jobCompany = matchedJob.company || '';
-          }
-        }
+      const detailMap = new Map<string, SkillCurriculumDetail>();
+      for (const d of allDetails) detailMap.set(d.skill.toLowerCase(), d);
 
-        if (jobSkills.length === 0) {
-          const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
-          const matchedJob = jobRes.jobs?.find(
-            (j: any) => j.job_title === selectedRole
-          );
-          if (matchedJob) {
-            jobSkills = matchedJob.skills || [];
-            jobCompany = matchedJob.company || '';
-          }
-        }
+      const steps: RoadmapStep[] = [];
 
-        if (jobSkills.length === 0) {
-          setJobNotFound(true);
-          setLoading(false);
-          return;
-        }
+      if (userSkills.length > 0) {
+        steps.push({
+          phase: 'Phase 1',
+          title: 'Skills You Already Have',
+          description: `${userSkills.length} skills in your profile.`,
+          type: 'mastered',
+          duration: 'Ready now',
+          skills: userSkills.map((s: string) => ({ name: s, curriculum: null })),
+        });
+      }
 
-        const mastered = jobSkills.filter((s) => userSkillSet.has(s.toLowerCase()));
-        const missing = jobSkills.filter((s) => !userSkillSet.has(s.toLowerCase()));
-
-        const steps: RoadmapStep[] = [];
-
-        if (mastered.length > 0) {
+      if (dagPath.length > 0) {
+        const perPhase = Math.ceil(dagPath.length / 3);
+        for (let i = 0; i < Math.min(3, Math.ceil(dagPath.length / perPhase)); i++) {
+          const phaseSkills = dagPath.slice(i * perPhase, (i + 1) * perPhase);
+          const enriched = await enrichSkills(phaseSkills);
+          const totalHours = enriched.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
           steps.push({
-            phase: 'Phase 1',
-            title: 'Current Qualifications',
-            description: `You already have ${mastered.length} of ${jobSkills.length} required skills for ${selectedRole}${jobCompany ? ' at ' + jobCompany : ''}.`,
-            skills: mastered,
-            type: 'mastered',
-            duration: 'Ready now',
+            phase: `Phase ${steps.length + 1}`,
+            title: `Learn ${phaseSkills.slice(0, 2).join(', ')}${phaseSkills.length > 2 ? ' & more' : ''}`,
+            description: `${phaseSkills.length} skill${phaseSkills.length > 1 ? 's' : ''} · ~${totalHours}h of material`,
+            type: 'learning',
+            duration: `${phaseSkills.length * 2} Weeks`,
+            skills: enriched,
           });
         }
-
-        if (missing.length > 0) {
-          // Use Python-powered DAG learning path if available
-          const orderedMissing = pythonLearningPath.length > 0
-            ? pythonLearningPath.filter((s) => missing.includes(s))
-            : [];
-
-          const effectiveMissing = orderedMissing.length > 0 ? orderedMissing : missing;
-
-          const skillsPerPhase = Math.ceil(effectiveMissing.length / 3);
-          const phases = Math.min(3, Math.ceil(effectiveMissing.length / skillsPerPhase));
-
-          for (let i = 0; i < phases; i++) {
-            const phaseSkills = effectiveMissing.slice(i * skillsPerPhase, (i + 1) * skillsPerPhase);
-            const weeksNeeded = phaseSkills.length * 2;
+      } else if (recommendations.length > 0) {
+        for (const rec of recommendations.slice(0, 3)) {
+          const missing = rec.requiredMissing || rec.required_missing || [];
+          if (missing.length > 0) {
+            const enriched = await enrichSkills(missing);
+            const totalHours = enriched.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
             steps.push({
               phase: `Phase ${steps.length + 1}`,
-              title: `Learn ${phaseSkills.length > 2 ? phaseSkills.slice(0, 2).join(', ') + ' & more' : phaseSkills.join(' & ')}`,
-              description: orderedMissing.length > 0
-                ? `Prerequisite-based: ${phaseSkills.length} skill${phaseSkills.length > 1 ? 's' : ''} in recommended order.`
-                : `Acquire ${phaseSkills.length} skill${phaseSkills.length > 1 ? 's' : ''} needed for ${selectedRole}.`,
-              skills: phaseSkills,
+              title: `Target: ${rec.role || rec.title}`,
+              description: `${missing.length} skills needed · ~${totalHours}h of material`,
               type: 'learning',
-              duration: `${weeksNeeded} Weeks`,
+              duration: `${missing.length * 2} Weeks`,
+              skills: enriched,
             });
           }
         }
-
-        setRoadmapSteps(steps);
-      } catch (err) {
-        console.error('Failed to fetch roadmap:', err);
-      } finally {
-        setLoading(false);
+      } else {
+        steps.push({
+          phase: 'Getting Started',
+          title: 'Explore a Career Path',
+          description: 'Go to Job Roles to select a target role and generate a personalized roadmap.',
+          type: 'learning',
+          duration: '',
+          skills: [],
+        });
       }
-    };
-    fetchRoadmap();
-  }, [selectedRole, selectedJobId, navigate]);
+
+      setRoadmapSteps(steps);
+    } catch (err) {
+      console.error('Failed to generate roadmap:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRoadmap = async () => {
+    try {
+      const { skills: userSkills } = await getSkills();
+      const userSkillSet = new Set(userSkills.map((s: string) => s.toLowerCase()));
+
+      let jobSkills: string[] = [];
+
+      if (selectedJobId) {
+        const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
+        const matchedJob = jobRes.jobs?.find(
+          (j: any) => j._id === selectedJobId || j.job_title === selectedRole
+        );
+        if (matchedJob) jobSkills = matchedJob.skills || [];
+      }
+
+      if (jobSkills.length === 0) {
+        const jobRes = await searchJobs({ keyword: selectedRole }, 1, 200);
+        const matchedJob = jobRes.jobs?.find((j: any) => j.job_title === selectedRole);
+        if (matchedJob) jobSkills = matchedJob.skills || [];
+      }
+
+      if (jobSkills.length === 0) {
+        if (pythonLearningPath.length > 0) {
+          const enriched = await enrichSkills(pythonLearningPath);
+          const totalHours = enriched.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
+          const perPhase = Math.ceil(enriched.length / 3);
+          const steps: RoadmapStep[] = [];
+          for (let i = 0; i < Math.min(3, Math.ceil(enriched.length / perPhase)); i++) {
+            const phaseSkills = enriched.slice(i * perPhase, (i + 1) * perPhase);
+            const phaseHours = phaseSkills.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
+            steps.push({
+              phase: `Phase ${steps.length + 1}`,
+              title: `Learn ${phaseSkills.slice(0, 2).map(p => capSkill(p.name)).join(', ')}${phaseSkills.length > 2 ? ' & more' : ''}`,
+              description: `From AI recommendations · ~${phaseHours}h of material`,
+              type: 'learning',
+              duration: `${phaseSkills.length * 2} Weeks`,
+              skills: phaseSkills,
+            });
+          }
+          setRoadmapSteps(steps);
+          setLoading(false);
+          return;
+        }
+        setJobNotFound(true);
+        setLoading(false);
+        return;
+      }
+
+      const mastered = jobSkills.filter((s) => userSkillSet.has(s.toLowerCase()));
+      const missing = jobSkills.filter((s) => !userSkillSet.has(s.toLowerCase()));
+
+      const steps: RoadmapStep[] = [];
+
+      if (mastered.length > 0) {
+        steps.push({
+          phase: 'Phase 1',
+          title: 'Mastered Skills',
+          description: `You already have ${mastered.length} of the required skills for ${selectedRole}.`,
+          type: 'mastered',
+          duration: 'Ready now',
+          skills: mastered.map((s) => ({ name: s, curriculum: null })),
+        });
+      }
+
+      if (missing.length > 0) {
+        const orderedMissing = pythonLearningPath.length > 0
+          ? pythonLearningPath.filter((s) => missing.includes(s))
+          : [];
+        const effectiveMissing = orderedMissing.length > 0 ? orderedMissing : missing;
+        const enriched = await enrichSkills(effectiveMissing);
+        const totalHours = enriched.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
+
+        const skillsPerPhase = Math.ceil(effectiveMissing.length / 3);
+        const phases = Math.min(3, Math.ceil(effectiveMissing.length / skillsPerPhase));
+
+        for (let i = 0; i < phases; i++) {
+          const phaseSkills = enriched.slice(i * skillsPerPhase, (i + 1) * skillsPerPhase);
+          const phaseHours = phaseSkills.reduce((s, ps) => s + (ps.curriculum?.total_hours || 0), 0);
+          const weeksNeeded = phaseSkills.length * 2;
+          steps.push({
+            phase: `Phase ${steps.length + 1}`,
+            title: `Learn ${phaseSkills.length > 2 ? phaseSkills.slice(0, 2).map(p => capSkill(p.name)).join(', ') + ' & more' : phaseSkills.map(p => capSkill(p.name)).join(' & ')}`,
+            description: orderedMissing.length > 0
+              ? `Prerequisite-based · ~${phaseHours}h of material`
+              : `Acquire ${phaseSkills.length} skill${phaseSkills.length > 1 ? 's' : ''} · ~${phaseHours}h of material`,
+            type: 'learning',
+            duration: `${weeksNeeded} Weeks`,
+            skills: phaseSkills,
+          });
+        }
+      }
+
+      setRoadmapSteps(steps);
+    } catch (err) {
+      console.error('Failed to fetch roadmap:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleExpand = (index: number) => {
     setExpandedIndex(expandedIndex === index ? null : index);
@@ -143,6 +285,10 @@ const LearningRoadmap: React.FC = () => {
   const totalSkillsToLearn = roadmapSteps
     .filter((s) => s.type === 'learning')
     .reduce((sum, s) => sum + s.skills.length, 0);
+
+  const totalHours = roadmapSteps
+    .filter((s) => s.type === 'learning')
+    .reduce((sum, s) => sum + s.skills.reduce((h, ps) => h + (ps.curriculum?.total_hours || 0), 0), 0);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F8FAFC' }}>
@@ -153,10 +299,16 @@ const LearningRoadmap: React.FC = () => {
         <Box sx={{ flexGrow: 1, p: 4 }}>
           <Button
             startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/alignment-results', { state: { roleTitle: selectedRole, jobId: selectedJobId, from } })}
+            onClick={() => {
+              if (selectedRole) {
+                navigate('/alignment-results', { state: { roleTitle: selectedRole, jobId: selectedJobId, from } });
+              } else {
+                navigate('/job-roles');
+              }
+            }}
             sx={{ mb: 3, color: '#119DA4', fontWeight: 'bold', textTransform: 'none' }}
           >
-            Back to Alignment Results
+            {selectedRole ? 'Back to Alignment Results' : 'Back'}
           </Button>
 
           <Paper sx={{ p: 4, borderRadius: 4, mb: 4, border: '1px solid #E2E8F0' }}>
@@ -164,12 +316,17 @@ const LearningRoadmap: React.FC = () => {
               Learning Roadmap
             </Typography>
             <Typography sx={{ mt: 1, color: '#64748B' }}>
-              Personalized roadmap for <strong>{selectedRole}</strong>
+              {selectedRole
+                ? `Personalized roadmap for <strong>${selectedRole}</strong>`
+                : 'General skill development path based on your profile'}
             </Typography>
             {roadmapSteps.length > 0 && (
-              <Box sx={{ display: 'flex', gap: 3, mt: 2 }}>
+              <Box sx={{ display: 'flex', gap: 3, mt: 2, flexWrap: 'wrap' }}>
                 <Chip label={`${roadmapSteps.length} Phases`} sx={{ bgcolor: '#E0F2FE', color: '#0369A1', fontWeight: 'bold' }} />
                 <Chip label={`${totalSkillsToLearn} Skills to Learn`} sx={{ bgcolor: '#FEF3C7', color: '#B45309', fontWeight: 'bold' }} />
+                {totalHours > 0 && (
+                  <Chip label={`~${totalHours}h of Material`} sx={{ bgcolor: '#EDE9FE', color: '#6D28D9', fontWeight: 'bold' }} />
+                )}
               </Box>
             )}
           </Paper>
@@ -197,7 +354,7 @@ const LearningRoadmap: React.FC = () => {
 
               return (
                 <Paper
-                  key={step.phase}
+                  key={step.phase + index}
                   sx={{
                     mb: 2,
                     borderRadius: 3,
@@ -252,52 +409,61 @@ const LearningRoadmap: React.FC = () => {
                   <Collapse in={isExpanded} timeout={300}>
                     <Divider />
                     <Box sx={{ p: 3 }} onClick={(e) => e.stopPropagation()}>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        {step.skills.map((skill) => (
-                          <Chip
-                            key={skill}
-                            label={skill}
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        {step.skills.map((ps) => (
+                          <Paper
+                            key={ps.name}
                             sx={{
-                              bgcolor: isMastered ? '#DCFCE7' : '#FEF3C7',
-                              color: isMastered ? '#166534' : '#92400E',
-                              fontWeight: 500,
+                              p: 1.5,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              bgcolor: isMastered ? '#DCFCE7' : '#FFFBEB',
                               border: `1px solid ${isMastered ? '#86EFAC' : '#FCD34D'}`,
+                              borderRadius: 2,
+                              boxShadow: 'none',
                             }}
-                          />
+                          >
+                            <Typography sx={{ fontWeight: 600, color: isMastered ? '#166534' : '#92400E' }}>
+                              {capSkill(ps.name)}
+                            </Typography>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              startIcon={<SchoolIcon />}
+                              onClick={() => navigate(`/skill/${encodeURIComponent(ps.name.toLowerCase())}`)}
+                              sx={{
+                                borderColor: '#119DA4',
+                                color: '#119DA4',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                '&:hover': { borderColor: '#19647E', bgcolor: 'rgba(17,157,164,0.08)' },
+                              }}
+                            >
+                              See Learning Materials
+                            </Button>
+                          </Paper>
                         ))}
                       </Box>
 
-                      <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                        {!isMastered && (
+                      {!isMastered && (
+                        <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
                           <Button
                             variant="contained"
                             onClick={() => navigate('/my-skill-profile')}
-                            sx={{
-                              bgcolor: '#119DA4',
-                              textTransform: 'none',
-                              fontWeight: 'bold',
-                              borderRadius: 2,
-                              '&:hover': { bgcolor: '#0e7075' },
-                            }}
+                            sx={{ bgcolor: '#119DA4', textTransform: 'none', fontWeight: 'bold', borderRadius: 2, '&:hover': { bgcolor: '#0e7075' } }}
                           >
                             Update Skills
                           </Button>
-                        )}
-                        <Button
-                          variant="outlined"
-                          onClick={() => navigate('/job-roles')}
-                          sx={{
-                            borderColor: '#119DA4',
-                            color: '#119DA4',
-                            textTransform: 'none',
-                            fontWeight: 'bold',
-                            borderRadius: 2,
-                            '&:hover': { borderColor: '#0e7075', bgcolor: 'rgba(17, 157, 164, 0.05)' },
-                          }}
-                        >
-                          View Other Roles
-                        </Button>
-                      </Box>
+                          <Button
+                            variant="outlined"
+                            onClick={() => navigate('/job-roles')}
+                            sx={{ borderColor: '#119DA4', color: '#119DA4', textTransform: 'none', fontWeight: 'bold', borderRadius: 2, '&:hover': { borderColor: '#0e7075', bgcolor: 'rgba(17, 157, 164, 0.05)' } }}
+                          >
+                            View Other Roles
+                          </Button>
+                        </Box>
+                      )}
                     </Box>
                   </Collapse>
                 </Paper>

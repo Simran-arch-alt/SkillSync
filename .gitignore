@@ -1,0 +1,14 @@
+node_modules/
+.env
+*.log
+uploads/*
+!uploads/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+frontend/dist/
+frontend/node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+python-engine/__pycache__/

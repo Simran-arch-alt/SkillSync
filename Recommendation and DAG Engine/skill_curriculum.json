@@ -1,0 +1,1468 @@
+{
+  "skills": {
+    "python": {
+      "sub_topics": [
+        {
+          "name": "Variables & Data Types",
+          "hours": 3,
+          "resource": {
+            "title": "Python Variables - W3Schools",
+            "url": "https://www.w3schools.com/python/python_variables.asp"
+          }
+        },
+        {
+          "name": "Control Flow & Loops",
+          "hours": 4,
+          "resource": {
+            "title": "Python Conditions - W3Schools",
+            "url": "https://www.w3schools.com/python/python_conditions.asp"
+          }
+        },
+        {
+          "name": "Functions & Modules",
+          "hours": 4,
+          "resource": {
+            "title": "Python Functions - W3Schools",
+            "url": "https://www.w3schools.com/python/python_functions.asp"
+          }
+        },
+        {
+          "name": "Data Structures (Lists, Dicts, Sets)",
+          "hours": 5,
+          "resource": {
+            "title": "Python Lists - W3Schools",
+            "url": "https://www.w3schools.com/python/python_lists.asp"
+          }
+        },
+        {
+          "name": "Object-Oriented Programming",
+          "hours": 5,
+          "resource": {
+            "title": "Python Classes - W3Schools",
+            "url": "https://www.w3schools.com/python/python_classes.asp"
+          }
+        },
+        {
+          "name": "File I/O & Error Handling",
+          "hours": 3,
+          "resource": {
+            "title": "Python Try Except - W3Schools",
+            "url": "https://www.w3schools.com/python/python_try_except.asp"
+          }
+        }
+      ],
+      "difficulty": "advanced",
+      "total_hours": 24,
+      "practice_projects": [
+        {
+          "name": "CLI To-Do App",
+          "difficulty": "beginner",
+          "description": "Build a command-line task manager with file persistence"
+        },
+        {
+          "name": "Web Scraper",
+          "difficulty": "intermediate",
+          "description": "Scrape and analyze data from a website using requests/bs4"
+        },
+        {
+          "name": "REST API Backend",
+          "difficulty": "advanced",
+          "description": "Build a Flask/FastAPI CRUD API with authentication"
+        }
+      ]
+    },
+    "sql": {
+      "sub_topics": [
+        {
+          "name": "SELECT & Filtering",
+          "hours": 3,
+          "resource": {
+            "title": "SQL SELECT - W3Schools",
+            "url": "https://www.w3schools.com/sql/sql_select.asp"
+          }
+        },
+        {
+          "name": "JOINs & Relationships",
+          "hours": 4,
+          "resource": {
+            "title": "SQL JOINs - W3Schools",
+            "url": "https://www.w3schools.com/sql/sql_join.asp"
+          }
+        },
+        {
+          "name": "Aggregation & Grouping",
+          "hours": 3,
+          "resource": {
+            "title": "SQL GROUP BY - W3Schools",
+            "url": "https://www.w3schools.com/sql/sql_groupby.asp"
+          }
+        },
+        {
+          "name": "Subqueries & CTEs",
+          "hours": 3,
+          "resource": {
+            "title": "SQL Subqueries - W3Schools",
+            "url": "https://www.w3schools.com/sql/sql_subqueries.asp"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Library Database",
+          "difficulty": "beginner",
+          "description": "Design a library catalog schema with books, members, loans"
+        },
+        {
+          "name": "E-commerce Analytics",
+          "difficulty": "intermediate",
+          "description": "Write complex queries for sales, inventory, and customer analytics"
+        },
+        {
+          "name": "Query Optimizer",
+          "difficulty": "advanced",
+          "description": "Analyze and optimize slow queries using EXPLAIN and indexing"
+        }
+      ]
+    },
+    "data structures": {
+      "sub_topics": [
+        {
+          "name": "Arrays & Linked Lists",
+          "hours": 4,
+          "resource": {
+            "title": "Data Structures - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=BBpAmMUFnLw"
+          }
+        },
+        {
+          "name": "Stacks & Queues",
+          "hours": 3,
+          "resource": {
+            "title": "Stacks and Queues - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=b5def3qGMac"
+          }
+        },
+        {
+          "name": "Trees & Graphs",
+          "hours": 5,
+          "resource": {
+            "title": "Binary Trees - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=fAAZix5ED9I"
+          }
+        },
+        {
+          "name": "Hash Tables",
+          "hours": 3,
+          "resource": {
+            "title": "Hash Tables - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=KyUTuwG_b6Q"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 15,
+      "practice_projects": [
+        {
+          "name": "Implement Data Structures",
+          "difficulty": "intermediate",
+          "description": "Implement linked list, tree, hash table from scratch"
+        },
+        {
+          "name": "Algorithm Visualizer",
+          "difficulty": "advanced",
+          "description": "Build a sorting/searching algorithm visualizer"
+        }
+      ]
+    },
+    "algorithms": {
+      "sub_topics": [
+        {
+          "name": "Sorting Algorithms",
+          "hours": 4,
+          "resource": {
+            "title": "Sorting Algorithms - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=kPRA0W1kECg"
+          }
+        },
+        {
+          "name": "Searching & Traversal",
+          "hours": 3,
+          "resource": {
+            "title": "Binary Search - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=6ys3iOhRlMA"
+          }
+        },
+        {
+          "name": "Dynamic Programming",
+          "hours": 5,
+          "resource": {
+            "title": "Dynamic Programming - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=oBt53YbR9Kk"
+          }
+        },
+        {
+          "name": "Big-O Complexity Analysis",
+          "hours": 3,
+          "resource": {
+            "title": "Big O Notation - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=Ca3qtRZfzPY"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 15,
+      "practice_projects": [
+        {
+          "name": "LeetCode Practice",
+          "difficulty": "intermediate",
+          "description": "Solve 50 problems covering key algorithm patterns"
+        },
+        {
+          "name": "Pathfinder Visualizer",
+          "difficulty": "advanced",
+          "description": "Visualize BFS/DFS/Dijkstra/A* on a grid"
+        }
+      ]
+    },
+    "statistics": {
+      "sub_topics": [
+        {
+          "name": "Descriptive Statistics",
+          "hours": 3,
+          "resource": {
+            "title": "Statistics Fundamentals - StatQuest",
+            "url": "https://www.youtube.com/watch?v=xxpc-HPKNis"
+          }
+        },
+        {
+          "name": "Probability Distributions",
+          "hours": 4,
+          "resource": {
+            "title": "Probability - StatQuest",
+            "url": "https://www.youtube.com/watch?v=uzkc-qNVoOk"
+          }
+        },
+        {
+          "name": "Hypothesis Testing",
+          "hours": 4,
+          "resource": {
+            "title": "P-values - StatQuest",
+            "url": "https://www.youtube.com/watch?v=vemZtEM63GY"
+          }
+        },
+        {
+          "name": "Correlation & Regression",
+          "hours": 3,
+          "resource": {
+            "title": "Correlation - StatQuest",
+            "url": "https://www.youtube.com/watch?v=xPPZG17c96Y"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 14,
+      "practice_projects": [
+        {
+          "name": "A/B Test Analyzer",
+          "difficulty": "intermediate",
+          "description": "Analyze A/B test results with hypothesis testing and confidence intervals"
+        },
+        {
+          "name": "Statistical Report",
+          "difficulty": "advanced",
+          "description": "Full EDA report with distributions, correlations, and regression"
+        }
+      ]
+    },
+    "excel": {
+      "sub_topics": [
+        {
+          "name": "Formulas & Functions",
+          "hours": 3,
+          "resource": {
+            "title": "Excel Formulas - Excel Easy",
+            "url": "https://www.excel-easy.com/excel-formulas.html"
+          }
+        },
+        {
+          "name": "Pivot Tables",
+          "hours": 3,
+          "resource": {
+            "title": "Pivot Tables - Excel Easy",
+            "url": "https://www.excel-easy.com/examples/pivot-tables.html"
+          }
+        },
+        {
+          "name": "Data Analysis Tools",
+          "hours": 3,
+          "resource": {
+            "title": "Data Analysis - Excel Easy",
+            "url": "https://www.excel-easy.com/data-analysis.html"
+          }
+        },
+        {
+          "name": "Charts & Visualization",
+          "hours": 2,
+          "resource": {
+            "title": "Charts - Excel Easy",
+            "url": "https://www.excel-easy.com/excel-charts.html"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 11,
+      "practice_projects": [
+        {
+          "name": "Sales Dashboard",
+          "difficulty": "beginner",
+          "description": "Interactive dashboard with pivot tables and slicers"
+        },
+        {
+          "name": "Financial Model",
+          "difficulty": "advanced",
+          "description": "Build a 3-statement financial model with scenarios"
+        }
+      ]
+    },
+    "machine learning": {
+      "sub_topics": [
+        {
+          "name": "Supervised Learning (Regression)",
+          "hours": 5,
+          "resource": {
+            "title": "Linear Regression - StatQuest",
+            "url": "https://www.youtube.com/watch?v=7eh4d6sabA0"
+          }
+        },
+        {
+          "name": "Supervised Learning (Classification)",
+          "hours": 5,
+          "resource": {
+            "title": "Logistic Regression - StatQuest",
+            "url": "https://www.youtube.com/watch?v=yIYKR4sgzI8"
+          }
+        },
+        {
+          "name": "Unsupervised Learning (Clustering)",
+          "hours": 4,
+          "resource": {
+            "title": "K-Means - StatQuest",
+            "url": "https://www.youtube.com/watch?v=4b5d3muPQmA"
+          }
+        },
+        {
+          "name": "Model Evaluation & Validation",
+          "hours": 4,
+          "resource": {
+            "title": "Cross Validation - StatQuest",
+            "url": "https://www.youtube.com/watch?v=fSytzGwwBVh"
+          }
+        },
+        {
+          "name": "Feature Engineering",
+          "hours": 3,
+          "resource": {
+            "title": "Feature Engineering - Kaggle",
+            "url": "https://www.kaggle.com/learn/feature-engineering"
+          }
+        }
+      ],
+      "difficulty": "advanced",
+      "total_hours": 21,
+      "practice_projects": [
+        {
+          "name": "House Price Predictor",
+          "difficulty": "beginner",
+          "description": "Linear regression on Boston housing dataset"
+        },
+        {
+          "name": "Spam Classifier",
+          "difficulty": "intermediate",
+          "description": "NLP pipeline with TF-IDF + Naive Bayes"
+        },
+        {
+          "name": "End-to-end ML Pipeline",
+          "difficulty": "advanced",
+          "description": "Full MLOps pipeline with feature store, training, deployment"
+        }
+      ]
+    },
+    "deep learning": {
+      "sub_topics": [
+        {
+          "name": "Neural Network Fundamentals",
+          "hours": 5,
+          "resource": {
+            "title": "Neural Networks - StatQuest",
+            "url": "https://www.youtube.com/watch?v=aircAruvnKk"
+          }
+        },
+        {
+          "name": "Backpropagation",
+          "hours": 4,
+          "resource": {
+            "title": "Backpropagation - StatQuest",
+            "url": "https://www.youtube.com/watch?v=Ilg3gGvQDto"
+          }
+        },
+        {
+          "name": "CNNs for Computer Vision",
+          "hours": 5,
+          "resource": {
+            "title": "CNNs - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=HGwBXEz0Edo"
+          }
+        },
+        {
+          "name": "RNNs for Sequences",
+          "hours": 4,
+          "resource": {
+            "title": "RNNs - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=AsNTP8KvrhU"
+          }
+        }
+      ],
+      "difficulty": "advanced",
+      "total_hours": 18,
+      "practice_projects": [
+        {
+          "name": "Image Classifier",
+          "difficulty": "intermediate",
+          "description": "CNN for CIFAR-10 classification with PyTorch/TF"
+        },
+        {
+          "name": "Text Generator",
+          "difficulty": "advanced",
+          "description": "Train an RNN/LSTM for text generation (Shakespeare)"
+        }
+      ]
+    },
+    "tensorflow": {
+      "sub_topics": [
+        {
+          "name": "Tensors & Operations",
+          "hours": 3,
+          "resource": {
+            "title": "TensorFlow 2.0 Tutorial - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=tpCFfUEv9Yc"
+          }
+        },
+        {
+          "name": "Building Models with Keras",
+          "hours": 4,
+          "resource": {
+            "title": "Keras Sequential API",
+            "url": "https://www.tensorflow.org/guide/keras/sequential_model"
+          }
+        },
+        {
+          "name": "Training & Optimization",
+          "hours": 4,
+          "resource": {
+            "title": "Custom Training - TensorFlow",
+            "url": "https://www.tensorflow.org/tutorials/customization/custom_training_walkthrough"
+          }
+        },
+        {
+          "name": "Saving & Loading Models",
+          "hours": 2,
+          "resource": {
+            "title": "Save and Load - TensorFlow",
+            "url": "https://www.tensorflow.org/tutorials/keras/save_and_load"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Model Export Pipeline",
+          "difficulty": "intermediate",
+          "description": "Train, save, and serve a TF model with TF Serving"
+        }
+      ]
+    },
+    "scikit-learn": {
+      "sub_topics": [
+        {
+          "name": "Data Preprocessing",
+          "hours": 3,
+          "resource": {
+            "title": "Preprocessing - Scikit-learn Docs",
+            "url": "https://scikit-learn.org/stable/modules/preprocessing.html"
+          }
+        },
+        {
+          "name": "Model Training & Prediction",
+          "hours": 3,
+          "resource": {
+            "title": "Supervised Learning - Scikit-learn",
+            "url": "https://scikit-learn.org/stable/supervised_learning.html"
+          }
+        },
+        {
+          "name": "Model Selection & Tuning",
+          "hours": 3,
+          "resource": {
+            "title": "GridSearchCV - Scikit-learn",
+            "url": "https://scikit-learn.org/stable/modules/grid_search.html"
+          }
+        },
+        {
+          "name": "Pipelines & Transformers",
+          "hours": 3,
+          "resource": {
+            "title": "Pipelines - Scikit-learn",
+            "url": "https://scikit-learn.org/stable/modules/compose.html"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 12,
+      "practice_projects": [
+        {
+          "name": "AutoML Pipeline",
+          "difficulty": "intermediate",
+          "description": "Build a pipeline with multiple models, grid search, and voting"
+        }
+      ]
+    },
+    "data visualization": {
+      "sub_topics": [
+        {
+          "name": "Matplotlib Basics",
+          "hours": 3,
+          "resource": {
+            "title": "Matplotlib Tutorial - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=OZOOLe2imFo"
+          }
+        },
+        {
+          "name": "Seaborn for Statistical Plots",
+          "hours": 3,
+          "resource": {
+            "title": "Seaborn Tutorial - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=6GUZXDef2U0"
+          }
+        },
+        {
+          "name": "Plotly for Interactive Charts",
+          "hours": 3,
+          "resource": {
+            "title": "Plotly Tutorial",
+            "url": "https://plotly.com/python/getting-started/"
+          }
+        },
+        {
+          "name": "Dashboard Design Principles",
+          "hours": 2,
+          "resource": {
+            "title": "Data Viz Best Practices",
+            "url": "https://www.tableau.com/learn/articles/best-practices-data-visualization"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 11,
+      "practice_projects": [
+        {
+          "name": "Exploratory Dashboard",
+          "difficulty": "beginner",
+          "description": "Create an interactive dashboard with Plotly Dash"
+        },
+        {
+          "name": "Data Story",
+          "difficulty": "advanced",
+          "description": "Tell a data-driven story using D3.js or Observable"
+        }
+      ]
+    },
+    "docker": {
+      "sub_topics": [
+        {
+          "name": "Containers vs VMs",
+          "hours": 2,
+          "resource": {
+            "title": "Docker Explained - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=eGDE3-LN3yE"
+          }
+        },
+        {
+          "name": "Dockerfile & Images",
+          "hours": 3,
+          "resource": {
+            "title": "Dockerfile Reference",
+            "url": "https://docs.docker.com/engine/reference/builder/"
+          }
+        },
+        {
+          "name": "Docker Compose",
+          "hours": 3,
+          "resource": {
+            "title": "Docker Compose - Official Docs",
+            "url": "https://docs.docker.com/compose/"
+          }
+        },
+        {
+          "name": "Networking & Volumes",
+          "hours": 3,
+          "resource": {
+            "title": "Docker Networking",
+            "url": "https://docs.docker.com/engine/network/"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 11,
+      "practice_projects": [
+        {
+          "name": "Dockerize a Web App",
+          "difficulty": "beginner",
+          "description": "Write a Dockerfile and docker-compose for a web app"
+        },
+        {
+          "name": "Multi-service Stack",
+          "difficulty": "intermediate",
+          "description": "Compose file for app + DB + cache + reverse proxy"
+        },
+        {
+          "name": "CI/CD Pipeline",
+          "difficulty": "advanced",
+          "description": "Build a multi-stage Docker pipeline with GitHub Actions"
+        }
+      ]
+    },
+    "aws": {
+      "sub_topics": [
+        {
+          "name": "IAM & Security Basics",
+          "hours": 3,
+          "resource": {
+            "title": "AWS IAM - AWS Docs",
+            "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+          }
+        },
+        {
+          "name": "EC2 & Compute",
+          "hours": 4,
+          "resource": {
+            "title": "EC2 Getting Started",
+            "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html"
+          }
+        },
+        {
+          "name": "S3 & Storage",
+          "hours": 3,
+          "resource": {
+            "title": "Amazon S3 - AWS Docs",
+            "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+          }
+        },
+        {
+          "name": "Lambda & Serverless",
+          "hours": 3,
+          "resource": {
+            "title": "AWS Lambda - AWS Docs",
+            "url": "https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Static Site on S3",
+          "difficulty": "beginner",
+          "description": "Host a static website using S3 + CloudFront"
+        },
+        {
+          "name": "Serverless API",
+          "difficulty": "intermediate",
+          "description": "Build a Lambda + API Gateway REST API"
+        },
+        {
+          "name": "Infra as Code",
+          "difficulty": "advanced",
+          "description": "Define full infra with Terraform (VPC, EC2, RDS, ECS)"
+        }
+      ]
+    },
+    "kubernetes": {
+      "sub_topics": [
+        {
+          "name": "Pods, Services & Deployments",
+          "hours": 4,
+          "resource": {
+            "title": "Kubernetes Basics",
+            "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/"
+          }
+        },
+        {
+          "name": "ConfigMaps & Secrets",
+          "hours": 3,
+          "resource": {
+            "title": "ConfigMaps - K8s Docs",
+            "url": "https://kubernetes.io/docs/concepts/configuration/configmap/"
+          }
+        },
+        {
+          "name": "Helm Charts",
+          "hours": 3,
+          "resource": {
+            "title": "Helm Getting Started",
+            "url": "https://helm.sh/docs/intro/quickstart/"
+          }
+        },
+        {
+          "name": "Cluster Management",
+          "hours": 3,
+          "resource": {
+            "title": "Cluster Admin - K8s Docs",
+            "url": "https://kubernetes.io/docs/concepts/cluster-administration/"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Deploy on Minikube",
+          "difficulty": "beginner",
+          "description": "Deploy a simple app with pods, services, deployments"
+        },
+        {
+          "name": "Helm Chart",
+          "difficulty": "intermediate",
+          "description": "Package an app as a Helm chart with configurable values"
+        },
+        {
+          "name": "Production Cluster",
+          "difficulty": "advanced",
+          "description": "Set up a multi-node cluster with monitoring and logging"
+        }
+      ]
+    },
+    "power bi": {
+      "sub_topics": [
+        {
+          "name": "Getting Started & Data Import",
+          "hours": 3,
+          "resource": {
+            "title": "Power BI Tutorial - Microsoft",
+            "url": "https://learn.microsoft.com/en-us/power-bi/fundamentals/desktop-getting-started"
+          }
+        },
+        {
+          "name": "Data Modeling & DAX",
+          "hours": 5,
+          "resource": {
+            "title": "DAX Basics - Microsoft",
+            "url": "https://learn.microsoft.com/en-us/dax/dax-basics"
+          }
+        },
+        {
+          "name": "Reports & Visualizations",
+          "hours": 3,
+          "resource": {
+            "title": "Visual Types - Microsoft",
+            "url": "https://learn.microsoft.com/en-us/power-bi/visuals/power-bia-all-visuals"
+          }
+        },
+        {
+          "name": "Publishing & Sharing",
+          "hours": 2,
+          "resource": {
+            "title": "Publish Reports - Microsoft",
+            "url": "https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-publish-to-web"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Sales Report",
+          "difficulty": "beginner",
+          "description": "Connect to data, build measures, and publish a report"
+        },
+        {
+          "name": "HR Analytics",
+          "difficulty": "intermediate",
+          "description": "Build a DAX-powered HR dashboard with KPIs"
+        }
+      ]
+    },
+    "tableau": {
+      "sub_topics": [
+        {
+          "name": "Connecting Data Sources",
+          "hours": 2,
+          "resource": {
+            "title": "Tableau Getting Started",
+            "url": "https://help.tableau.com/current/pro/desktop/en-us/getting-started.htm"
+          }
+        },
+        {
+          "name": "Building Worksheets & Dashboards",
+          "hours": 4,
+          "resource": {
+            "title": "Build a Viz - Tableau",
+            "url": "https://help.tableau.com/current/pro/desktop/en-us/building_general.htm"
+          }
+        },
+        {
+          "name": "Calculated Fields & LOD Expressions",
+          "hours": 4,
+          "resource": {
+            "title": "LOD Expressions - Tableau",
+            "url": "https://help.tableau.com/current/pro/desktop/en-us/calculationscalculatedfieldsLOD.htm"
+          }
+        },
+        {
+          "name": "Storytelling with Data",
+          "hours": 2,
+          "resource": {
+            "title": "Tableau Stories",
+            "url": "https://help.tableau.com/current/pro/desktop/en-us/stories.htm"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 12,
+      "practice_projects": [
+        {
+          "name": "Superstore Analysis",
+          "difficulty": "beginner",
+          "description": "Create a Tableau story using the Superstore dataset"
+        },
+        {
+          "name": "Viz of the Day",
+          "difficulty": "intermediate",
+          "description": "Recreate a Tableau Public visualization of the day"
+        }
+      ]
+    },
+    "git": {
+      "sub_topics": [
+        {
+          "name": "Init, Add, Commit",
+          "hours": 2,
+          "resource": {
+            "title": "Git Basics - Atlassian",
+            "url": "https://www.atlassian.com/git/tutorials/setting-up-a-repository"
+          }
+        },
+        {
+          "name": "Branching & Merging",
+          "hours": 3,
+          "resource": {
+            "title": "Git Branching - Atlassian",
+            "url": "https://www.atlassian.com/git/tutorials/using-branches"
+          }
+        },
+        {
+          "name": "Remotes & Push/Pull",
+          "hours": 2,
+          "resource": {
+            "title": "Syncing - Atlassian",
+            "url": "https://www.atlassian.com/git/tutorials/syncing"
+          }
+        },
+        {
+          "name": "Resolving Merge Conflicts",
+          "hours": 2,
+          "resource": {
+            "title": "Merge Conflicts - Atlassian",
+            "url": "https://www.atlassian.com/git/tutorials/using-branches/merge-conflicts"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 9,
+      "practice_projects": [
+        {
+          "name": "Contribute to OSS",
+          "difficulty": "beginner",
+          "description": "Fork, branch, commit, PR workflow on a real repo"
+        },
+        {
+          "name": "Git Hooks Setup",
+          "difficulty": "intermediate",
+          "description": "Pre-commit hooks for linting and testing"
+        },
+        {
+          "name": "Git Workflow Strategy",
+          "difficulty": "advanced",
+          "description": "Design and document a branching strategy (GitFlow/Trunk)"
+        }
+      ]
+    },
+    "javascript": {
+      "sub_topics": [
+        {
+          "name": "Variables, Functions & Scope",
+          "hours": 4,
+          "resource": {
+            "title": "JS Basics - W3Schools",
+            "url": "https://www.w3schools.com/js/js_intro.asp"
+          }
+        },
+        {
+          "name": "DOM Manipulation",
+          "hours": 4,
+          "resource": {
+            "title": "JS DOM - W3Schools",
+            "url": "https://www.w3schools.com/js/js_htmldom.asp"
+          }
+        },
+        {
+          "name": "Async/Await & Promises",
+          "hours": 4,
+          "resource": {
+            "title": "JS Async - W3Schools",
+            "url": "https://www.w3schools.com/js/js_async.asp"
+          }
+        },
+        {
+          "name": "ES6+ Features",
+          "hours": 3,
+          "resource": {
+            "title": "ES6 Tutorial - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=NCwa_xkJi3k"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 15,
+      "practice_projects": [
+        {
+          "name": "Interactive Quiz",
+          "difficulty": "beginner",
+          "description": "Build a browser-based quiz app with scoring"
+        },
+        {
+          "name": "Weather Dashboard",
+          "difficulty": "intermediate",
+          "description": "Fetch API data and render a weather dashboard"
+        },
+        {
+          "name": "Real-time Chat",
+          "difficulty": "advanced",
+          "description": "Build a WebSocket-based chat application"
+        }
+      ]
+    },
+    "react": {
+      "sub_topics": [
+        {
+          "name": "Components & JSX",
+          "hours": 3,
+          "resource": {
+            "title": "React Tutorial - React.dev",
+            "url": "https://react.dev/learn/thinking-in-react"
+          }
+        },
+        {
+          "name": "State & Props",
+          "hours": 4,
+          "resource": {
+            "title": "State - React.dev",
+            "url": "https://react.dev/learn/state-a-components-memory"
+          }
+        },
+        {
+          "name": "Hooks (useState, useEffect)",
+          "hours": 4,
+          "resource": {
+            "title": "Hooks Overview - React.dev",
+            "url": "https://react.dev/reference/react"
+          }
+        },
+        {
+          "name": "Routing & API Calls",
+          "hours": 3,
+          "resource": {
+            "title": "React Router Docs",
+            "url": "https://reactrouter.com/en/main/start/tutorial"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 14,
+      "practice_projects": [
+        {
+          "name": "Todo App",
+          "difficulty": "beginner",
+          "description": "CRUD todo app with React hooks and local storage"
+        },
+        {
+          "name": "E-commerce Frontend",
+          "difficulty": "intermediate",
+          "description": "Product listing, cart, and checkout UI with React Router"
+        },
+        {
+          "name": "Dashboard with Charts",
+          "difficulty": "advanced",
+          "description": "Admin dashboard with real-time data viz (Recharts/D3)"
+        }
+      ]
+    },
+    "angular": {
+      "sub_topics": [
+        {
+          "name": "Components & Templates",
+          "hours": 4,
+          "resource": {
+            "title": "Angular Tutorial",
+            "url": "https://angular.dev/tutorial"
+          }
+        },
+        {
+          "name": "Services & Dependency Injection",
+          "hours": 3,
+          "resource": {
+            "title": "DI Guide - Angular",
+            "url": "https://angular.dev/guide/di"
+          }
+        },
+        {
+          "name": "Reactive Forms",
+          "hours": 3,
+          "resource": {
+            "title": "Reactive Forms - Angular",
+            "url": "https://angular.dev/guide/forms/reactive-forms"
+          }
+        },
+        {
+          "name": "HTTP Client & Observables",
+          "hours": 3,
+          "resource": {
+            "title": "HTTP - Angular",
+            "url": "https://angular.dev/guide/http"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 13,
+      "practice_projects": [
+        {
+          "name": "Task Manager SPA",
+          "difficulty": "beginner",
+          "description": "Simple task manager with services and routing"
+        },
+        {
+          "name": "Admin Dashboard",
+          "difficulty": "intermediate",
+          "description": "Feature-rich dashboard with reactive forms, guards, interceptors"
+        }
+      ]
+    },
+    "html": {
+      "sub_topics": [
+        {
+          "name": "Document Structure & Semantics",
+          "hours": 2,
+          "resource": {
+            "title": "HTML Tutorial - W3Schools",
+            "url": "https://www.w3schools.com/html/"
+          }
+        },
+        {
+          "name": "Forms & Input Elements",
+          "hours": 3,
+          "resource": {
+            "title": "HTML Forms - W3Schools",
+            "url": "https://www.w3schools.com/html/html_forms.asp"
+          }
+        },
+        {
+          "name": "Tables & Media",
+          "hours": 2,
+          "resource": {
+            "title": "HTML Tables - W3Schools",
+            "url": "https://www.w3schools.com/html/html_tables.asp"
+          }
+        },
+        {
+          "name": "Accessibility & SEO Basics",
+          "hours": 2,
+          "resource": {
+            "title": "HTML Accessibility - W3Schools",
+            "url": "https://www.w3schools.com/html/html_accessibility.asp"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 9,
+      "practice_projects": [
+        {
+          "name": "Personal Portfolio",
+          "difficulty": "beginner",
+          "description": "Build a responsive personal portfolio page"
+        },
+        {
+          "name": "Landing Page Clone",
+          "difficulty": "intermediate",
+          "description": "Recreate a professional landing page from scratch"
+        }
+      ]
+    },
+    "css": {
+      "sub_topics": [
+        {
+          "name": "Selectors & Box Model",
+          "hours": 3,
+          "resource": {
+            "title": "CSS Introduction - W3Schools",
+            "url": "https://www.w3schools.com/css/css_intro.asp"
+          }
+        },
+        {
+          "name": "Flexbox & Grid Layout",
+          "hours": 4,
+          "resource": {
+            "title": "CSS Flexbox - W3Schools",
+            "url": "https://www.w3schools.com/css/css3_flexbox.asp"
+          }
+        },
+        {
+          "name": "Responsive Design & Media Queries",
+          "hours": 3,
+          "resource": {
+            "title": "CSS RWD - W3Schools",
+            "url": "https://www.w3schools.com/css/css_rwd_intro.asp"
+          }
+        },
+        {
+          "name": "Animations & Transitions",
+          "hours": 2,
+          "resource": {
+            "title": "CSS Animations - W3Schools",
+            "url": "https://www.w3schools.com/css/css3_animations.asp"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 12,
+      "practice_projects": [
+        {
+          "name": "CSS Art",
+          "difficulty": "beginner",
+          "description": "Create a pure CSS illustration or logo"
+        },
+        {
+          "name": "Component Library",
+          "difficulty": "intermediate",
+          "description": "Build a small CSS component library with themes"
+        }
+      ]
+    },
+    "web frameworks": {
+      "sub_topics": [
+        {
+          "name": "HTTP Protocol & Request/Response Cycle",
+          "hours": 3,
+          "resource": {
+            "title": "HTTP Explained - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=1BnTJM7m0kk"
+          }
+        },
+        {
+          "name": "REST API Design Principles",
+          "hours": 3,
+          "resource": {
+            "title": "REST API - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=Q-BpqyOT3a8"
+          }
+        },
+        {
+          "name": "MVC Architecture Pattern",
+          "hours": 3,
+          "resource": {
+            "title": "MVC Pattern - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=DUg2UWKu-dY"
+          }
+        },
+        {
+          "name": "Middleware & Authentication",
+          "hours": 3,
+          "resource": {
+            "title": "JWT Auth - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=UBUNrFtufWo"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 12,
+      "practice_projects": [
+        {
+          "name": "MVC Blog",
+          "difficulty": "intermediate",
+          "description": "Build a blog using MVC pattern with any framework"
+        },
+        {
+          "name": "Real-time Dashboard",
+          "difficulty": "advanced",
+          "description": "Build a real-time data dashboard with WebSockets"
+        }
+      ]
+    },
+    "java": {
+      "sub_topics": [
+        {
+          "name": "Syntax & OOP Fundamentals",
+          "hours": 5,
+          "resource": {
+            "title": "Java Tutorial - W3Schools",
+            "url": "https://www.w3schools.com/java/"
+          }
+        },
+        {
+          "name": "Collections Framework",
+          "hours": 4,
+          "resource": {
+            "title": "Java Collections - W3Schools",
+            "url": "https://www.w3schools.com/java/java_collections.asp"
+          }
+        },
+        {
+          "name": "Streams & Lambda Expressions",
+          "hours": 4,
+          "resource": {
+            "title": "Java Streams - W3Schools",
+            "url": "https://www.w3schools.com/java/java_stream.asp"
+          }
+        },
+        {
+          "name": "Exception Handling & Generics",
+          "hours": 3,
+          "resource": {
+            "title": "Java Exceptions - W3Schools",
+            "url": "https://www.w3schools.com/java/java_exceptions.asp"
+          }
+        }
+      ],
+      "difficulty": "advanced",
+      "total_hours": 16,
+      "practice_projects": [
+        {
+          "name": "Console Calculator",
+          "difficulty": "beginner",
+          "description": "OOP-based calculator with plugins for operations"
+        },
+        {
+          "name": "Spring Boot REST API",
+          "difficulty": "intermediate",
+          "description": "CRUD API with Spring Data JPA + PostgreSQL"
+        }
+      ]
+    },
+    "node js": {
+      "sub_topics": [
+        {
+          "name": "Node.js Fundamentals",
+          "hours": 3,
+          "resource": {
+            "title": "Node.js Guide - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=TlB_eWDSMt4"
+          }
+        },
+        {
+          "name": "Express.js Framework",
+          "hours": 4,
+          "resource": {
+            "title": "Express Tutorial",
+            "url": "https://expressjs.com/en/starter/hello-world.html"
+          }
+        },
+        {
+          "name": "Middleware & Routing",
+          "hours": 3,
+          "resource": {
+            "title": "Using Middleware - Express",
+            "url": "https://expressjs.com/en/guide/using-middleware.html"
+          }
+        },
+        {
+          "name": "REST API Development",
+          "hours": 4,
+          "resource": {
+            "title": "Building APIs - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=fsCjnZtYQmU"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 14,
+      "practice_projects": [
+        {
+          "name": "URL Shortener",
+          "difficulty": "beginner",
+          "description": "Express app that shortens URLs with redirect"
+        },
+        {
+          "name": "Blog API",
+          "difficulty": "intermediate",
+          "description": "RESTful blog API with auth, CRUD, and pagination"
+        },
+        {
+          "name": "Real-time Collaboration",
+          "difficulty": "advanced",
+          "description": "Collaborative document editor using Socket.IO"
+        }
+      ]
+    },
+    "linux": {
+      "sub_topics": [
+        {
+          "name": "File System & Navigation",
+          "hours": 2,
+          "resource": {
+            "title": "Linux Commands - Linuxize",
+            "url": "https://linuxize.com/post/linux-commands-for-beginners/"
+          }
+        },
+        {
+          "name": "Shell Scripting Basics",
+          "hours": 3,
+          "resource": {
+            "title": "Bash Scripting - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=tK9Oc6AEnR4"
+          }
+        },
+        {
+          "name": "Process & Service Management",
+          "hours": 3,
+          "resource": {
+            "title": "Linux Processes - Linuxize",
+            "url": "https://linuxize.com/post/how-to-use-linux-ps-command/"
+          }
+        },
+        {
+          "name": "User & Permission Management",
+          "hours": 2,
+          "resource": {
+            "title": "Linux Permissions - Linuxize",
+            "url": "https://linuxize.com/post/linux-file-permissions/"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 10,
+      "practice_projects": [
+        {
+          "name": "Shell Script Toolkit",
+          "difficulty": "beginner",
+          "description": "Write utility scripts for file/process management"
+        },
+        {
+          "name": "Server Hardening",
+          "difficulty": "intermediate",
+          "description": "Harden a Linux server (users, SSH, firewall, audit)"
+        }
+      ]
+    },
+    "c": {
+      "sub_topics": [
+        {
+          "name": "Syntax, Pointers & Memory",
+          "hours": 5,
+          "resource": {
+            "title": "C Programming - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=KJgsSFOSQVI"
+          }
+        },
+        {
+          "name": "Data Structures in C",
+          "hours": 5,
+          "resource": {
+            "title": "Data Structures in C - freeCodeCamp",
+            "url": "https://www.youtube.com/watch?v=lpDj0ZvXdfI"
+          }
+        },
+        {
+          "name": "File Handling & I/O",
+          "hours": 3,
+          "resource": {
+            "title": "C File I/O - GeeksforGeeks",
+            "url": "https://www.geeksforgeeks.org/basics-file-handling-c/"
+          }
+        },
+        {
+          "name": "Memory Management (malloc/free)",
+          "hours": 3,
+          "resource": {
+            "title": "Dynamic Memory - GeeksforGeeks",
+            "url": "https://www.geeksforgeeks.org/dynamic-memory-allocation-in-c-using-malloc-calloc-free-and-realloc/"
+          }
+        }
+      ],
+      "difficulty": "advanced",
+      "total_hours": 16,
+      "practice_projects": [
+        {
+          "name": "Memory Allocator",
+          "difficulty": "advanced",
+          "description": "Implement a custom malloc/free using sbrk"
+        },
+        {
+          "name": "Simple Shell",
+          "difficulty": "intermediate",
+          "description": "Implement a basic Unix shell with job control"
+        }
+      ]
+    },
+    "azure": {
+      "sub_topics": [
+        {
+          "name": "Azure Portal & Resource Groups",
+          "hours": 3,
+          "resource": {
+            "title": "Azure Fundamentals - Microsoft Learn",
+            "url": "https://learn.microsoft.com/en-us/training/paths/azure-fundamentals/"
+          }
+        },
+        {
+          "name": "Virtual Machines & App Services",
+          "hours": 4,
+          "resource": {
+            "title": "Azure Compute - Microsoft Learn",
+            "url": "https://learn.microsoft.com/en-us/azure/virtual-machines/"
+          }
+        },
+        {
+          "name": "Azure SQL & Storage",
+          "hours": 3,
+          "resource": {
+            "title": "Azure SQL - Microsoft Learn",
+            "url": "https://learn.microsoft.com/en-us/azure/azure-sql/"
+          }
+        },
+        {
+          "name": "Azure DevOps & Pipelines",
+          "hours": 4,
+          "resource": {
+            "title": "Azure DevOps - Microsoft Learn",
+            "url": "https://learn.microsoft.com/en-us/azure/devops/"
+          }
+        }
+      ],
+      "difficulty": "intermediate",
+      "total_hours": 14,
+      "practice_projects": [
+        {
+          "name": "Deploy VM + App Service",
+          "difficulty": "beginner",
+          "description": "Provision a VM and deploy a web app in Azure"
+        },
+        {
+          "name": "DevOps Pipeline",
+          "difficulty": "intermediate",
+          "description": "Full CI/CD with Azure DevOps (build, test, deploy)"
+        }
+      ]
+    }
+  }
+}

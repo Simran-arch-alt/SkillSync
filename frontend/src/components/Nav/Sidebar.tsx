@@ -33,8 +33,8 @@ const Sidebar = () => {
   const goToSkillProfile = () => navigate("/my-skill-profile");
   const goToSettings = () => navigate("/settings");
   const goToJobRoles = () => navigate("/job-roles");
-  const goToAlignmentResults = () => navigate("/job-roles");
-  const goToLearningRoadmap = () => navigate("/job-roles");
+  const goToAlignmentResults = () => navigate("/alignment-results");
+  const goToLearningRoadmap = () => navigate("/learning-roadmap");
 
 
   return (
@@ -155,15 +155,12 @@ const Sidebar = () => {
             gap: 2,
             py: 1.5,
             borderRadius: 2,
-            mt: 40,
-            ...(location.pathname === "/logout" ? activeStyle : {}),
+            color: "#FF8A8A",
+            "&:hover": { bgcolor: "rgba(239, 68, 68, 0.1)" },
           }}
         >
-          <LogoutIcon sx={{ color: "#ef4444" }} />
-          <ListItemText
-            primary="Logout"
-            sx={{ color: "#ef4444" }}
-          />
+          <LogoutIcon sx={{ color: "#FF8A8A" }} />
+          <ListItemText primary="Logout" sx={{ fontWeight: "bold" }} />
         </ListItemButton>
       </List>
     </Box>
