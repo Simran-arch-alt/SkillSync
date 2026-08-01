@@ -1,47 +1,54 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+const mockRequest = vi.hoisted(() => vi.fn());
+const mockPost = vi.hoisted(() => vi.fn());
+
+vi.mock('axios', () => ({
+  default: {
+    create: vi.fn(() => ({
+      request: mockRequest,
+      post: mockPost,
+      interceptors: {
+        request: { use: vi.fn() },
+      },
+    })),
+    isAxiosError: vi.fn((err: unknown) => (err as Record<string, unknown>)?.isAxiosError === true),
+  },
+}));
+
 import request, { uploadFile } from '../../services/api';
 
 beforeEach(() => {
   localStorage.clear();
-  vi.spyOn(global, 'fetch');
-});
-
-afterEach(() => {
-  vi.restoreAllMocks();
+  mockRequest.mockReset();
+  mockPost.mockReset();
 });
 
 describe('api request', () => {
-  test('makes GET request with correct URL', async () => {
+  it('makes GET request with correct URL', async () => {
     const mockData = { success: true, data: { total: 5 } };
-    (global.fetch as any).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockData),
-    });
+    mockRequest.mockResolvedValue({ data: mockData, status: 200 });
 
     const result = await request('/dashboard/total-jobs');
-    expect(global.fetch).toHaveBeenCalledWith(
-      '/api/dashboard/total-jobs',
+    expect(mockRequest).toHaveBeenCalledWith(
       expect.objectContaining({
-        headers: expect.objectContaining({
-          'Content-Type': 'application/json',
-        }),
+        url: '/dashboard/total-jobs',
+        method: 'GET',
       })
     );
     expect(result).toEqual({ total: 5 });
   });
 
-  test('includes Authorization header when token exists', async () => {
+  it('includes Authorization header when token exists', async () => {
     localStorage.setItem('token', 'my-jwt-token');
     const mockData = { success: true, data: { user: { name: 'Test' } } };
-    (global.fetch as any).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockData),
-    });
+    mockRequest.mockResolvedValue({ data: mockData, status: 200 });
 
     await request('/auth/me');
-    expect(global.fetch).toHaveBeenCalledWith(
-      '/api/auth/me',
+    expect(mockRequest).toHaveBeenCalledWith(
       expect.objectContaining({
+        url: '/auth/me',
+        method: 'GET',
         headers: expect.objectContaining({
           Authorization: 'Bearer my-jwt-token',
         }),
@@ -49,44 +56,49 @@ describe('api request', () => {
     );
   });
 
-  test('throws error on non-ok response', async () => {
-    (global.fetch as any).mockResolvedValue({
-      ok: false,
-      json: () => Promise.resolve({ success: false, message: 'Not found' }),
+  it('throws error on non-ok response', async () => {
+    const axiosError = Object.assign(new Error('Not found'), {
+      isAxiosError: true,
+      response: {
+        status: 404,
+        data: { success: false, message: 'Not found' },
+      },
     });
+    mockRequest.mockRejectedValue(axiosError);
 
     await expect(request('/nonexistent')).rejects.toThrow('Not found');
   });
 
-  test('throws generic error when message missing', async () => {
-    (global.fetch as any).mockResolvedValue({
-      ok: false,
-      status: 500,
-      json: () => Promise.resolve({}),
+  it('throws generic error when message missing', async () => {
+    const axiosError = Object.assign(new Error('Server Error'), {
+      isAxiosError: true,
+      response: {
+        status: 500,
+        data: {},
+      },
     });
+    mockRequest.mockRejectedValue(axiosError);
 
     await expect(request('/error')).rejects.toThrow('Request failed with status 500');
   });
 });
 
 describe('uploadFile', () => {
-  test('uploads file with FormData', async () => {
+  it('uploads file with FormData', async () => {
     localStorage.setItem('token', 'upload-token');
     const mockData = { success: true, data: { url: '/uploads/file.pdf' } };
-    (global.fetch as any).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockData),
-    });
+    mockPost.mockResolvedValue({ data: mockData });
 
     const file = new File(['content'], 'resume.pdf', { type: 'application/pdf' });
-    const result = await uploadFile('/students/upload-resume', file);
+    await uploadFile('/students/upload-resume', file);
 
-    expect(global.fetch).toHaveBeenCalledWith(
-      '/api/students/upload-resume',
+    expect(mockPost).toHaveBeenCalledWith(
+      '/students/upload-resume',
+      expect.any(FormData),
       expect.objectContaining({
-        method: 'POST',
-        headers: { Authorization: 'Bearer upload-token' },
-        body: expect.any(FormData),
+        headers: expect.objectContaining({
+          'Content-Type': 'multipart/form-data',
+        }),
       })
     );
   });

@@ -1,51 +1,75 @@
+import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
+
 const API_BASE = '/api';
 
-function getToken(): string | null {
-  return localStorage.getItem('token');
+export const apiClient = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+interface RequestOptions {
+  method?: string;
+  body?: string;
+  headers?: Record<string, string>;
 }
 
-async function request<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const token = getToken();
+async function request<T>(endpoint: string,options: RequestOptions = {}): Promise<T> {
+  const { method = 'GET', body, headers: customHeaders } = options;
+  const token = localStorage.getItem('token');
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
+    ...(customHeaders || {}),
   };
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
+  const config: AxiosRequestConfig = {
+    method,
+    url: endpoint,
     headers,
-  });
+    data: body != null ? JSON.parse(body) : undefined,
+  };
 
-  const json = await res.json();
+  try {
+    const res = await apiClient.request(config);
+    const json = res.data;
 
-  if (!res.ok || !json.success) {
-    throw new Error(json.message || `Request failed with status ${res.status}`);
+    if (!json.success) {
+      throw new Error(json.message || `Request failed with status ${res.status}`);
+    }
+
+    return json.data as T;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      const json = error.response.data as Record<string, unknown>;
+      throw new Error(
+        (json?.message as string) || `Request failed with status ${error.response.status}`
+      );
+    }
+    throw error;
   }
-
-  return json.data as T;
 }
 
 export function uploadFile(endpoint: string, file: File): Promise<any> {
-  const token = getToken();
   const formData = new FormData();
   formData.append('file', file);
 
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  return fetch(`${API_BASE}${endpoint}`, {
-    method: 'POST',
-    headers,
-    body: formData,
-  }).then((r) => r.json());
+  return apiClient
+    .post(endpoint, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    .then((res) => res.data);
 }
 
 export default request;

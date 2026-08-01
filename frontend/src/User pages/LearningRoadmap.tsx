@@ -9,18 +9,19 @@ import {
   Collapse,
   IconButton,
   Divider,
-  Link,
+  
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SchoolIcon from '@mui/icons-material/School';
-import BuildIcon from '@mui/icons-material/Build';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Nav/Sidebar';
 import Nav from '../components/Nav/Nav';
 import { getSkills } from '../services/studentService';
 import { searchJobs } from '../services/jobService';
+
 import { getAdvancedRecommendations, getSkillCurriculum } from '../services/recommendationService';
 import type { SkillCurriculumDetail } from '../services/recommendationService';
 
@@ -50,6 +51,9 @@ interface PhaseSkill {
   curriculum: SkillCurriculumDetail | null;
 }
 
+
+
+
 interface RoadmapStep {
   phase: string;
   title: string;
@@ -75,6 +79,7 @@ const LearningRoadmap: React.FC = () => {
 
   useEffect(() => {
     if (!selectedRole) {
+
       generateGeneralRoadmap();
       return;
     }
@@ -286,9 +291,11 @@ const LearningRoadmap: React.FC = () => {
     .filter((s) => s.type === 'learning')
     .reduce((sum, s) => sum + s.skills.length, 0);
 
+
   const totalHours = roadmapSteps
     .filter((s) => s.type === 'learning')
     .reduce((sum, s) => sum + s.skills.reduce((h, ps) => h + (ps.curriculum?.total_hours || 0), 0), 0);
+
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F8FAFC' }}>

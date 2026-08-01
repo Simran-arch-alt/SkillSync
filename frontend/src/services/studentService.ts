@@ -1,4 +1,4 @@
-import request from './api';
+import request, { apiClient } from './api';
 
 export interface StudentProfile {
   _id: string;
@@ -54,17 +54,22 @@ export async function removeSkills(skills: string[]): Promise<string[]> {
 }
 
 export async function uploadResume(file: File): Promise<{ resume: string }> {
-  const token = localStorage.getItem('token');
   const formData = new FormData();
   formData.append('resume', file);
-  const res = await fetch('/api/students/upload-resume', {
-    method: 'POST',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: formData,
-  });
-  const json = await res.json();
-  if (!res.ok) {
-    throw new Error(json.message || 'Upload failed');
+
+  try {
+    const res = await apiClient.post('/students/upload-resume', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Upload failed');
+    }
+    return res.data.data;
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response: { data?: Record<string, unknown> } };
+      throw new Error((axiosError.response.data?.message as string) || 'Upload failed');
+    }
+    throw error;
   }
-  return json.data;
 }

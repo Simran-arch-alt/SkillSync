@@ -7,7 +7,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Nav from "../components/Nav/Nav";
 import { useState, useEffect } from "react";
 import { getSkills } from "../services/studentService";
-import { searchJobs, getJobById, getRolesSummary } from "../services/jobService";
+
+import {searchJobs,getJobById, getRolesSummary } from "../services/jobService";
 import { getAdvancedRecommendations } from "../services/recommendationService";
 import type { RuleRecommendation } from "../services/recommendationService";
 import type { RoleSummary } from "../services/jobService";
@@ -66,6 +67,7 @@ const SKILL_DESCRIPTIONS: Record<string, string> = {
   'agile': 'Iterative software development methodology emphasizing flexibility, collaboration, and customer feedback.',
 };
 
+
 interface AlignmentData {
   score: number;
   matchedSkills: string[];
@@ -100,6 +102,7 @@ const AlignmentResults = () => {
       setLoading(false);
     }
   }, [selectedRole, selectedJobId, roles]);
+
 
   const runAlignment = async (role: string, jobId?: string) => {
     setLoading(true);
@@ -253,11 +256,11 @@ const AlignmentResults = () => {
       </Box>
     );
   }
-
-  return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFC" }}>
-      <Sidebar />
-      <Box sx={{ flexGrow: 1 }}>
+ 
+    return (
+      <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFC" }}>
+        <Sidebar />
+        <Box sx={{ flexGrow: 1 }}>
         <Nav />
 
         <Box sx={{ flexGrow: 1, px: { xs: 2, md: 3, xl: 4 }, py: { xs: 3, md: 4 } }}>

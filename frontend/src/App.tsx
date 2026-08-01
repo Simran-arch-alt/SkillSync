@@ -39,7 +39,7 @@ import AdminPrivacySecurity from './components/AdminSettings/AdminPrivacySecurit
 
 
 function App() {
-  return (
+  return (    
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
